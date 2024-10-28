@@ -10,12 +10,12 @@
     display: none !important;
 }
 
-.fc-wrap-left .el-form-item__label {
-    justify-content: flex-start;
+.fc-wrap-right .el-form-item__label {
+    justify-content: flex-end;
 }
 
 .fc-wrap-left .el-form-item__label {
-    justify-content: flex-end;
+    justify-content: flex-start;
 }
 
 .fc-wrap-top.el-form-item {

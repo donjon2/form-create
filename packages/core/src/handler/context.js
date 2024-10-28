@@ -100,7 +100,7 @@ export default function useContext(Handler) {
                     if (key === 'hidden' && Boolean(n) !== Boolean(o)) {
                         this.$render.clearCacheAll();
                     }
-                    if ((key === 'ignore' && ctx.input) || (key === 'hidden' && ctx.input && this.options.ignoreHiddenFields)) {
+                    if ((key === 'ignore' && ctx.input) || (key === 'hidden' && ctx.input && (ctx.rule.ignore === 'hidden' || this.options.ignoreHiddenFields))) {
                         this.syncForm();
                     } else if (key === 'link') {
                         ctx.link();

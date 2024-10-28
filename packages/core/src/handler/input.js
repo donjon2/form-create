@@ -99,7 +99,7 @@ export default function useInput(Handler) {
             this.syncValue();
         },
         isIgnore(rule) {
-            return rule.ignore || (this.options.ignoreHiddenFields && rule.hidden);
+            return rule.ignore === true || (rule.ignore === 'hidden' && rule.hidden) || (this.options.ignoreHiddenFields && rule.hidden);
         },
         appendValue(rule) {
             if ((!rule.field || !hasProperty(this.appendData, rule.field)) && !this.options.forceCoverValue) {

@@ -31,21 +31,21 @@ type RowProps = {
 }
 
 export interface OptionAttrs {
-    col?: Boolean | ColProps & {
+    col?: Boolean | Partial<ColProps & {
         labelWidth?: number | string;
         show?: Boolean;
-    };
-    row?: Boolean | RowProps & {
+    }>;
+    row?: Boolean | Partial<RowProps & {
         show?: Boolean;
-    };
-    info?: Boolean | VNodeRule & {
+    }>;
+    info?: Boolean | Partial<VNodeRule & {
         show?: Boolean;
         native?: Boolean;
         icon?: string;
         align?: 'left' | 'right';
         info?: string;
-    };
-    wrap?: Boolean | VNodeRule & {
+    }>;
+    wrap?: Boolean | Partial<VNodeRule & {
         labelWidth?: string
         required?: boolean
         error?: string
@@ -53,8 +53,8 @@ export interface OptionAttrs {
         inlineMessage?: boolean
         size?: ComponentSize
         show?: Boolean;
-    };
-    form?: {
+    }>;
+    form?: Partial<{
         inline?: boolean
         disabled?: boolean
         labelPosition?: string
@@ -67,29 +67,29 @@ export interface OptionAttrs {
         size?: ComponentSize
         className?: any;
         col?: Boolean;
-    };
+    }>;
 
-    submitBtn?: Boolean | ButtonProps & {
+    submitBtn?: Boolean | Partial<ButtonProps & {
         click?: Function;
         innerText?: string;
         show?: Boolean;
-    };
+    }>;
 
-    resetBtn?: Boolean | ButtonProps & {
+    resetBtn?: Boolean | Partial<ButtonProps & {
         click?: Function;
         innerText?: string;
         show?: Boolean;
-    };
+    }>;
 
 }
 
-declare const optionAttrs: OptionAttrs & {
-    title?: Boolean | VNodeRule & {
+declare const optionAttrs: Partial<OptionAttrs & {
+    title?: Boolean | Partial<VNodeRule & {
         show?: Boolean;
         native?: Boolean;
         title: string;
-    };
-};
+    }>;
+}>;
 
 export interface CreatorAttrs {
     col(props: typeof optionAttrs.col): this;

@@ -1,52 +1,52 @@
 import {FormData, VNodeRule} from "@form-create/core";
-import {ButtonProps,TooltipProps, PopoverProps, ColProps, RowProps, FormItemProps, FormProps} from "naive-ui";
+import {ButtonProps, TooltipProps, PopoverProps, ColProps, RowProps, FormItemProps, FormProps} from "naive-ui";
 import {Api} from "./index";
 import {ComponentInternalInstance} from "@vue/runtime-core";
 
 export interface OptionAttrs {
-    col?: Boolean | ColProps & {
+    col?: Boolean | Partial<ColProps & {
         labelWidth?: number | string;
         show?: Boolean;
-    };
-    row?: Boolean | RowProps & {
+    }>;
+    row?: Boolean | Partial<RowProps & {
         show?: Boolean;
-    };
-    info?: Boolean | (TooltipProps | PopoverProps) & VNodeRule & {
+    }>;
+    info?: Boolean | Partial<(TooltipProps | PopoverProps) & VNodeRule & {
         show?: Boolean;
         native?: Boolean;
         icon?: string;
         align?: 'left' | 'right';
         info?: string;
-    };
-    wrap?: Boolean | VNodeRule & FormItemProps & {
+    }>;
+    wrap?: Boolean | Partial<VNodeRule & FormItemProps & {
         show?: Boolean;
-    };
-    form?: FormProps & {
+    }>;
+    form?: Partial<FormProps & {
         className?: any;
         col?: Boolean;
-    };
+    }>;
 
-    submitBtn?: Boolean | ButtonProps & {
+    submitBtn?: Boolean | Partial<ButtonProps & {
         click?: Function;
         innerText?: string;
         show?: Boolean;
-    };
+    }>;
 
-    resetBtn?: Boolean | ButtonProps & {
+    resetBtn?: Boolean | Partial<ButtonProps & {
         click?: Function;
         innerText?: string;
         show?: Boolean;
-    };
+    }>;
 
 }
 
-declare const optionAttrs: OptionAttrs & {
-    title?: Boolean | VNodeRule & {
+declare const optionAttrs: Partial<OptionAttrs & {
+    title?: Boolean | Partial<VNodeRule & {
         show?: Boolean;
         native?: Boolean;
         title?: string;
-    };
-};
+    }>;
+}>;
 
 export interface CreatorAttrs {
     col(props: typeof optionAttrs.col): this;

@@ -11,17 +11,17 @@ export interface OptionAttrs {
     row?: Boolean | Partial<RowProps & {
         show?: Boolean;
     }>;
-    info?: {
+    info?: Partial<{
         show?: Boolean;
         native?: Boolean;
         icon?: string;
         align?: 'left' | 'right';
         info?: string;
-    };
+    }>;
     wrap?: Boolean | Partial<VNodeRule & FieldProps & {
         show?: Boolean;
     }>;
-    form?: FormProps;
+    form?: Partial<FormProps>;
 
     submitBtn?: Boolean | Partial<ButtonProps & {
         click?: Function;
@@ -37,13 +37,13 @@ export interface OptionAttrs {
 
 }
 
-declare const optionAttrs: OptionAttrs & {
-    title?: Boolean | VNodeRule & {
+declare const optionAttrs: Partial<OptionAttrs & {
+    title?: Boolean | Partial<VNodeRule & {
         show?: Boolean;
         native?: Boolean;
         title: string;
-    };
-};
+    }>;
+}>;
 
 export interface CreatorAttrs {
     col(props: typeof optionAttrs.col): this;

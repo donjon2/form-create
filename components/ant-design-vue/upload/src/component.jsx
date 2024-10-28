@@ -2,6 +2,7 @@ import {defineComponent, resolveComponent} from 'vue';
 import toArray from '@form-create/utils/lib/toarray';
 import getSlot from '@form-create/utils/lib/slot';
 import PlusOutlined from './PlusOutlined.vue';
+import UploadOutlined from './UploadOutlined.vue';
 
 const parseFile = function (file, uid) {
         return {
@@ -43,6 +44,7 @@ export default defineComponent({
             required: true
         },
         onPreview: Function,
+        listType: String,
         modalTitle: String,
         previewMask: undefined,
     },
@@ -92,11 +94,12 @@ export default defineComponent({
         const aModal = resolveComponent('AModal');
         const props = {[aModal.props.open ? 'open' : 'visible']: this.previewVisible}
         return <>
-            <AUpload maxCount={this.limit} listType={'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
+            <AUpload maxCount={this.limit} listType={this.listType || 'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
                 onChange={this.handleChange} fileList={this.uploadList}
                 ref="upload" v-slots={getSlot(this.$slots, ['default'])}>
-                {isShow ? (this.$slots.default?.() ||
-                    <PlusOutlined style="font-size: 16px; width: 16px;"/>) : null}
+                {isShow ? (this.$slots.default?.() || ['text', 'picture'].indexOf(this.listType) === -1 
+                    ? <PlusOutlined style="font-size: 16px; width: 16px;"/> 
+                    : <AButton><UploadOutlined/>点击上传</AButton>) : null}
             </AUpload>
             <aModal mask={this.previewMask} title={this.modalTitle} {...props}
                 onCancel={() => this.previewVisible = false} footer={null}>

@@ -14,9 +14,9 @@ export default {
     modelField: 'value',
     render(children, ctx) {
         let type = ctx.prop.props.type;
-        if (['textarea', 'search'].indexOf(type) === -1) type = 'input';
+        if (['textarea', 'search', 'password'].indexOf(type) === -1) type = 'input';
 
-        type = {textarea: 'ATextarea', search: 'AInputSearch'}[type] || 'AInput'
+        type = {textarea: 'ATextarea', search: 'AInputSearch', password: 'AInputPassword'}[type] || 'AInput'
         return ctx.$render.vNode.make(type, ctx.prop, children);
     }
 }

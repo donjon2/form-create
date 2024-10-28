@@ -3,6 +3,7 @@ import {creatorFactory} from '@form-create/core/src/index';
 const DEFAULT_FORMATS = {
     date: 'YYYY-MM-DD',
     month: 'YYYY-MM',
+    week: 'YYYY-wo',
     datetime: 'YYYY-MM-DD HH:mm:ss',
     timerange: 'HH:mm:ss',
     daterange: 'YYYY-MM-DD',

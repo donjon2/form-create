@@ -4,6 +4,7 @@ const FORMAT_TYPE = {
     date: 'YYYY-MM-DD',
     month: 'YYYY-MM',
     week: 'YYYY-wo',
+    quarter: 'YYYY-QQ',
     year: 'YYYY',
 };
 

@@ -5,11 +5,19 @@ import {defineComponent} from 'vue';
 import IconUpload from './IconUpload.vue';
 
 function parseFile(file, i) {
+    if (typeof file === 'object') {
+        return file;
+    }
     return {
         url: file,
+        is_string: true,
         name: getFileName(file),
         uid: i
     };
+}
+
+function parseUpload(file) {
+    return {...file, file, value: file};
 }
 
 function getFileName(file) {
@@ -45,11 +53,11 @@ export default defineComponent({
         }
     },
     created() {
-        this.fileList = toArray(this.modelValue).map(parseFile);
+        this.fileList = toArray(this.modelValue).map(parseFile).map(parseUpload);
     },
     watch: {
         modelValue(n) {
-            this.fileList = toArray(n).map(parseFile);
+            this.fileList = toArray(n).map(parseFile).map(parseUpload);
         }
     },
     methods: {
@@ -66,7 +74,7 @@ export default defineComponent({
             }
         },
         update(fileList) {
-            let files = fileList.map((file) => file.url).filter((url) => url !== undefined);
+            let files = fileList.map((v) => v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined);
             this.$emit('update:modelValue', files);
         },
         handleCancel() {

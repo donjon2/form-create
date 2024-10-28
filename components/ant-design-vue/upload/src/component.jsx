@@ -5,8 +5,12 @@ import PlusOutlined from './PlusOutlined.vue';
 import UploadOutlined from './UploadOutlined.vue';
 
 const parseFile = function (file, uid) {
+        if (typeof file === 'object') {
+            return file;
+        }
         return {
             url: file,
+            is_string: true,
             name: getFileName(file),
             status: 'done',
             uid: -1 * (uid + 1)
@@ -14,7 +18,7 @@ const parseFile = function (file, uid) {
     }, getFileName = function (file) {
         return ('' + file).split('/').pop()
     }, parseUpload = function (file) {
-        return {url: file.url, file, uid: file.uid};
+        return {...file, file, value: file};
     };
 
 const NAME = 'fcUpload';
@@ -86,7 +90,7 @@ export default defineComponent({
             }
         },
         input() {
-            this.$emit('update:modelValue', this.uploadList.map(v => v.url));
+            this.$emit('update:modelValue', this.uploadList.map(v => v.is_string ? v.url : (v.value || v.url)));
         },
     },
     render() {
@@ -94,11 +98,12 @@ export default defineComponent({
         const aModal = resolveComponent('AModal');
         const props = {[aModal.props.open ? 'open' : 'visible']: this.previewVisible}
         return <>
-            <AUpload maxCount={this.limit} listType={this.listType || 'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
+            <AUpload maxCount={this.limit} listType={this.listType || 'picture-card'} {...this.$attrs}
+                onPreview={this.handlePreview}
                 onChange={this.handleChange} fileList={this.uploadList}
                 ref="upload" v-slots={getSlot(this.$slots, ['default'])}>
-                {isShow ? (this.$slots.default?.() || ['text', 'picture'].indexOf(this.listType) === -1 
-                    ? <PlusOutlined style="font-size: 16px; width: 16px;"/> 
+                {isShow ? (this.$slots.default?.() || ['text', 'picture'].indexOf(this.listType) === -1
+                    ? <PlusOutlined style="font-size: 16px; width: 16px;"/>
                     : <AButton><UploadOutlined/>点击上传</AButton>) : null}
             </AUpload>
             <aModal mask={this.previewMask} title={this.modalTitle} {...props}
@@ -107,7 +112,7 @@ export default defineComponent({
             </aModal>
         </>;
     },
-    mounted(){
-        this.$emit('fc.el',this.$refs.upload);
+    mounted() {
+        this.$emit('fc.el', this.$refs.upload);
     }
 });

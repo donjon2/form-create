@@ -2,8 +2,12 @@ import {defineComponent} from 'vue';
 import toArray from '@form-create/utils/lib/toarray';
 
 const parseFile = function (file, uid) {
+        if (typeof file === 'object') {
+            return file;
+        }
         return {
             url: file,
+            is_string: true,
             name: getFileName(file),
             status: 'done',
             uid: uid + 1
@@ -11,7 +15,7 @@ const parseFile = function (file, uid) {
     }, getFileName = function (file) {
         return ('' + file).split('/').pop()
     }, parseUpload = function (file) {
-        return {url: file.url, file};
+        return {...file, file, value: file};
     };
 
 const NAME = 'fcUpload';
@@ -57,14 +61,11 @@ export default defineComponent({
         handleChange(file) {
             this.onSuccess(...arguments);
             const list = this.uploadList;
-            if (file.url) list.push({
-                url: file.url,
-                file,
-            });
+            if (file.url || file.value) list.push(file);
             this.input(list);
         },
         input(n) {
-            this.$emit('update:modelValue', n.map(v => v.url));
+            this.$emit('update:modelValue', n.map(v => v.is_string ? v.url : (v.value || v.url)));
         },
         inputRemove(n) {
             if (n.length < this.uploadList.length) {
@@ -92,7 +93,7 @@ export default defineComponent({
             </aModal>
         </>;
     },
-    mounted(){
-        this.$emit('fc.el',this.$refs.upload);
+    mounted() {
+        this.$emit('fc.el', this.$refs.upload);
     }
 });

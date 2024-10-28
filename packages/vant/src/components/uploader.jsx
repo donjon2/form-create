@@ -4,11 +4,19 @@ import toArray from '@form-create/utils/lib/toarray';
 const NAME = 'fcUploader';
 
 function parseFile(file, i) {
+    if (typeof file === 'object') {
+        return file;
+    }
     return {
         url: file,
+        is_string: true,
         name: getFileName(file),
         uid: i
     };
+}
+
+function parseUpload(file) {
+    return {...file, file, value: file};
 }
 
 function getFileName(file) {
@@ -37,14 +45,14 @@ export default defineComponent({
         const afterRead = toRef(props, 'afterRead');
         const modelValue = toRef(props, 'modelValue', []);
 
-        const fileList = ref(toArray(modelValue.value).map(parseFile));
+        const fileList = ref(toArray(modelValue.value).map(parseFile).map(parseUpload));
 
         watch(() => modelValue.value, (n) => {
-            fileList.value = toArray(n).map(parseFile);
+            fileList.value = toArray(n).map(parseFile).map(parseUpload);
         })
 
         const uploadValue = () => {
-            let files = fileList.value.map((file) => file.url).filter((url) => url !== undefined);
+            let files = fileList.value.map((v) => v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined);
             _.emit('update:modelValue', props.maxCount === 1 ? (files[0] || '') : files);
         };
 

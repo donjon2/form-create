@@ -23,7 +23,7 @@ function install(FormCreate) {
 
     if (Field.props) {
         Field.props.modelValue = {
-            type: [String, Number, Array, Object],
+            type: [String, Number, Array, Object, Boolean],
             default: '',
         };
     }

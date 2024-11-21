@@ -22,6 +22,7 @@ export default {
     col: PRE + '-col',
     row: PRE + '-row',
     group: 'fc-group',
+    array: 'fc-group',
     object: 'fc-sub-form',
     subForm: 'fc-sub-form',
 }

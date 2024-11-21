@@ -16,6 +16,7 @@ export default {
     select: PRE + 'Select',
     checkbox: PRE + 'CheckboxGroup',
     radio: PRE + 'RadioGroup',
+    input: PRE + 'Input',
     inputNumber: PRE + 'InputNumber',
     treeSelect: PRE + 'TreeSelect',
     search: PRE + 'InputSearch',
@@ -29,6 +30,7 @@ export default {
     tree: PRE + 'Tree',
     autoComplete: PRE + 'AutoComplete',
     group: 'fcGroup',
+    array: 'fcGroup',
     subForm: 'fcSubForm',
     object: 'fcSubForm',
 }

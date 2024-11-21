@@ -31,6 +31,7 @@ export default {
     transfer: PRE + 'Transfer',
     tree: PRE + 'Tree',
     group: 'fcGroup',
+    array: 'fcGroup',
     object: 'fcSubForm',
     subForm: 'fcSubForm',
 }

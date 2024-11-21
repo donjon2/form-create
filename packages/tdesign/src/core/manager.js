@@ -63,12 +63,7 @@ export default {
         return prop;
     },
     mergeProp(ctx) {
-        ctx.prop = mergeProps([{
-            info: this.options.info || {},
-            wrap: this.options.wrap || {},
-            col: this.options.col || {},
-            title: this.options.title || {},
-        }, ctx.prop], {
+        const def = {
             info: {
                 type: 'popup',
                 placement: 'top-left',
@@ -78,7 +73,10 @@ export default {
             title: {},
             col: {span: 12},
             wrap: {},
-        }, {normal: ['title', 'info', 'col', 'wrap']});
+        };
+        ['info', 'wrap', 'col', 'title'].forEach(name => {
+            ctx.prop[name] = mergeProps([this.options[name] || {}, ctx.prop[name] || {}], def[name]);
+        });
     },
     getDefaultOptions() {
         return getConfig();

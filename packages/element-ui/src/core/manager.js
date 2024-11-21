@@ -70,12 +70,7 @@ export default {
         return prop;
     },
     mergeProp(ctx) {
-        ctx.prop = mergeProps([{
-            info: this.options.info || {},
-            wrap: this.options.wrap || {},
-            col: this.options.col || {},
-            title: this.options.title || {},
-        }, ctx.prop], {
+        const def = {
             info: {
                 trigger: 'hover',
                 placement: 'top-start',
@@ -84,7 +79,10 @@ export default {
             title: {},
             col: {span: 24},
             wrap: {},
-        }, {normal: ['title', 'info', 'col', 'wrap']});
+        };
+        ['info', 'wrap', 'col', 'title'].forEach(name => {
+            ctx.prop[name] = mergeProps([this.options[name] || {}, ctx.prop[name] || {}], def[name]);
+        });
     },
     getDefaultOptions() {
         return getConfig();
@@ -150,7 +148,11 @@ export default {
         const isTip = isTooltip(infoProp);
         const form = this.options.form;
         const titleSlot = this.getSlot('title');
-        const children = [titleSlot ? titleSlot({title: titleProp.title || '', rule: ctx.rule, options: this.options}) : ((titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || ''))];
+        const children = [titleSlot ? titleSlot({
+            title: titleProp.title || '',
+            rule: ctx.rule,
+            options: this.options
+        }) : ((titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || ''))];
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
@@ -277,7 +279,8 @@ export default {
                     const fApi = this.$handle.api;
                     this.options.submitBtn.click
                         ? this.options.submitBtn.click(fApi)
-                        : fApi.submit().catch(()=>{});
+                        : fApi.submit().catch(() => {
+                        });
                 }
             },
             key: `${this.key}b1`,

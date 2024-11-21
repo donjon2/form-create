@@ -100,10 +100,10 @@ export default defineComponent({
                 onRemove={this.handleRemove}
                 fileList={this.fileList}
                 v-slots={getSlot(this.$slots, ['default'])} ref="upload">
-                {(this.$slots.default?.() ||
-                    ['text', 'picture'].indexOf(this.listType) === -1 ? <ElIcon>
+                {((this.$slots.default?.()) ||
+                    (['text', 'picture'].indexOf(this.listType) === -1 ? <ElIcon>
                         <IconUpload/>
-                    </ElIcon> : <ElButton type="primary">点击上传</ElButton>
+                    </ElIcon> : <ElButton type="primary">点击上传</ElButton>)
                 )}
             </ElUpload>
             <ElDialog appendToBody={true} modal={this.previewMask} title={this.modalTitle}

@@ -248,12 +248,18 @@ export default function useContext(Handler) {
                     for (let i = 0; i < item.group.length; i++) {
                         const one = item.group[i];
                         let flag;
+                        let field = one.field;
+                        if (one.variable) {
+                            field = JSON.stringify(this.fc.getLoadData(one.variable) || '');
+                        }
                         if (one.mode) {
                             flag = checkCondition(one);
                         } else if (!condition[one.condition]) {
                             flag = false;
+                        } else if (is.Function(one.handler)) {
+                            flag = invoke(() => one.handler(this.api, ctx.rule));
                         } else {
-                            flag = (new Function('$condition', '$val', '$form', '$group', `with($form){with(this){with($group){ return $condition['${one.condition}'](${one.field}, ${one.compare ? one.compare : '$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {});
+                            flag = (new Function('$condition', '$val', '$form', '$group', '$rule', `with($form){with(this){with($group){ return $condition['${one.condition}'](${field}, ${one.compare ? one.compare : '$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule);
                         }
                         if (or && flag) {
                             return true;

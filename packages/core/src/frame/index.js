@@ -436,7 +436,7 @@ export default function FormCreateFactory(config) {
             }
         },
         getLocale() {
-            let locale = this.vm.props.locale;
+            let locale = this.vm.setupState.top.props.locale;
             if (locale && typeof locale === 'object') {
                 return locale.name;
             }
@@ -449,7 +449,7 @@ export default function FormCreateFactory(config) {
             return 'zh-cn';
         },
         globalLanguageDriver(id) {
-            let locale = this.vm.props.locale;
+            let locale = this.vm.setupState.top.props.locale;
             let value = undefined;
             if (locale && typeof locale === 'object') {
                 value = deepGet(locale, id);

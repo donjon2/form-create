@@ -279,6 +279,7 @@ export default function useRender(Render) {
                     callback: (value) => {
                         this.onInput(ctx, value);
                     },
+                    modelField: field,
                     value: this.$handle.getFormData(ctx)
                 };
                 props.push({

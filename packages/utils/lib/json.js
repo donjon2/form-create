@@ -5,17 +5,12 @@ import is from './type';
 const PREFIX = '[[FORM-CREATE-PREFIX-';
 const SUFFIX = '-FORM-CREATE-SUFFIX]]';
 
-const $T = '$FN:';
-const $TX = '$FNX:';
-const $ON = '$GLOBAL:';
-const FUNCTION = 'function';
-
 export function toJson(obj, space) {
     return JSON.stringify(deepExtend(Array.isArray(obj) ? [] : {}, obj, true), function (key, val) {
         if (val && val._isVue === true)
             return undefined;
 
-        if (typeof val !== FUNCTION) {
+        if (typeof val !== 'function') {
             return val;
         }
         if (val.__json) {
@@ -42,11 +37,14 @@ export function parseFn(fn, mode) {
             if (v.indexOf(SUFFIX) > 0 && v.indexOf(PREFIX) === 0) {
                 v = v.replace(SUFFIX, '').replace(PREFIX, '');
                 flag = true;
-            } else if (v.indexOf($T) === 0) {
-                v = v.replace($T, '');
+            } else if (v.indexOf('$FN:') === 0) {
+                v = v.substring(4);
                 flag = true;
-            } else if (v.indexOf($ON) === 0) {
-                const name = v.replace($ON, '');
+            } else if (v.indexOf('$EXEC:') === 0) {
+                v = v.substring(6);
+                flag = true;
+            } else if (v.indexOf('$GLOBAL:') === 0) {
+                const name = v.substring(8);
                 v = function (...args) {
                     const callback = args[0].api.getGlobalEvent(name);
                     if (callback) {
@@ -57,16 +55,18 @@ export function parseFn(fn, mode) {
                 v.__json = fn;
                 v.__inject = true;
                 return v;
-            } else if (v.indexOf($TX) === 0) {
-                v = makeFn('function($inject){' + v.replace($TX, '') + '}');
+            } else if (v.indexOf('$FNX:') === 0) {
+                v = makeFn('function($inject){' + v.substring(5) + '}');
                 v.__json = fn;
                 v.__inject = true;
                 return v;
-            } else if (!mode && v.indexOf(FUNCTION) === 0 && v !== FUNCTION) {
+            } else if (!mode && v.indexOf('function ') === 0 && v !== 'function ') {
+                flag = true;
+            } else if (!mode && v.indexOf('function(') === 0 && v !== 'function(') {
                 flag = true;
             }
             if (!flag) return fn;
-            const val = makeFn((v.indexOf(FUNCTION) === -1 && v.indexOf('(') !== 0) ? (FUNCTION + ' ' + v) : v);
+            const val = makeFn(v);
             val.__json = fn;
             return val;
         } catch (e) {

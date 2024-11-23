@@ -1,4 +1,4 @@
-import {defineComponent, ref, resolveComponent, toRef, watch} from 'vue';
+import {computed, defineComponent, ref, resolveComponent, toRef, watch} from 'vue';
 import getSlot from '@form-create/utils/lib/slot';
 import toArray from '@form-create/utils/lib/toarray';
 
@@ -14,12 +14,14 @@ export default defineComponent({
             default: () => []
         },
         type: String,
+        options: Array,
         input: Boolean,
         inputValue: String,
     },
     emits: ['update:modelValue', 'fc.el'],
     setup(props, _) {
         const options = toRef(props.formCreateInject, 'options', []);
+        const opt = toRef(props, 'options');
         const value = toRef(props, 'modelValue');
         const inputValue = toRef(props, 'inputValue', '');
         const customValue = ref(inputValue.value);
@@ -41,9 +43,33 @@ export default defineComponent({
             }
             updateCustomValue(n);
         })
-        const _options = () => {
-            return Array.isArray(options.value) ? options.value : []
-        }
+
+        const _options = computed(() => {
+            let arr = options.value || [];
+            if (opt.value) {
+                arr = opt.value || [];
+            }
+            return Array.isArray(arr) ? arr : [];
+        });
+
+
+        watch(value, (n) => {
+            let value = null;
+            if (!inputValue.value && n != null && Array.isArray(n) && n.length > 0 && input.value) {
+                const values = _options.value.map(item => {
+                    return item.value;
+                });
+                n.forEach((val) => {
+                    if (values.indexOf(val) === -1) {
+                        value = val;
+                    }
+                })
+            }
+            if (value != null) {
+                customValue.value = value;
+            }
+        }, {immediate: true});
+
         const onInput = (n) => {
             _.emit('update:modelValue', n);
         };
@@ -68,7 +94,7 @@ export default defineComponent({
         const name = this.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox';
         const Type = resolveComponent(name);
         return <ElCheckboxGroup {...this.$attrs} modelValue={this.value} v-slots={getSlot(this.$slots, ['default'])}
-            onUpdate:modelValue={this.onInput} ref="el">{this.options().map((opt, index) => {
+            onUpdate:modelValue={this.onInput} ref="el">{this.options.map((opt, index) => {
                 const props = {...opt};
                 const value = props.value;
                 const label = props.label;

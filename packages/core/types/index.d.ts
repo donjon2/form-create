@@ -106,7 +106,7 @@ export interface Driver {
     parsers: {
         [id: string]: Parser;
     };
-    updateOptions: (options:Object) => void;
+    updateOptions: (options: Object) => void;
     updateWrap: (ctx: Object) => void;
     defaultRender: (children: Slots, ctx: Object) => VNodeChild | VNodeChild[];
     defaultPreview: (children: Slots, ctx: Object) => VNodeChild | VNodeChild[];
@@ -191,7 +191,7 @@ export interface util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs
 
     refreshData(id: string): void;
 
-    extendApi(fn: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>)=>Object): void;
+    extendApi(fn: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Object): void;
 
     setModelField(type: string, field: string): void;
 
@@ -204,7 +204,10 @@ export interface util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs
     isMobile?: Boolean;
 }
 
-export type FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> = Component & util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> & {
+export type FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
+    Component
+    & util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+    & {
     util: util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
 };
 
@@ -338,6 +341,37 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
         loadData?: LoadDataEffectOption | Array<LoadDataEffectOption>;
         [key: string]: any;
     };
+    hook?: {
+        load?: (evt: {
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        mounted?: (evt: {
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        deleted?: (evt: {
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        value?: (evt: {
+            value: any,
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        hidden?: (evt: {
+            value: boolean,
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        watch?: (evt: {
+            key: string,
+            oldValue: any,
+            newValue: any,
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+    }
 
     [key: string]: any;
 }
@@ -594,7 +628,7 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     getRule(id: string, origin: false): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    getParentRule(id: string| Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): undefined|Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    getParentRule(id: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): undefined | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     getRefRule(name: string): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
@@ -652,7 +686,7 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     refreshData(id: string): void;
 
-    t(id: string, params?: Object): string|undefined;
+    t(id: string, params?: Object): string | undefined;
 
     getLocale(): string;
 

@@ -302,6 +302,7 @@ export default function useRender(Render) {
             ctx.el = this.vm.refs[ctx.ref] || el;
             ctx.parser.mounted(ctx);
             this.$handle.effect(ctx, 'mounted');
+            this.$handle.targetHook(ctx, 'mounted');
         },
         onInput(ctx, value) {
             if (ctx.prop.modelEmit) {

@@ -17,6 +17,7 @@ export default function useInput(Handler) {
             this.valueChange(ctx, value);
             this.vm.emit('change', ctx.field, value, ctx.origin, this.api, setFlag || false);
             this.effect(ctx, 'value');
+            this.targetHook(ctx, 'value', {value});
             this.emitEvent('change', ctx.field, value, {
                 rule: ctx.origin,
                 api: this.api,

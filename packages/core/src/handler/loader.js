@@ -176,7 +176,10 @@ export default function useLoader(Handler) {
                 ctx.root = rules;
                 this.setCtx(ctx);
 
-                !isCopy && !isInit && this.effect(ctx, 'load');
+                if (!isCopy && !isInit) {
+                    this.effect(ctx, 'load');
+                    this.targetHook(ctx, 'load');
+                }
 
                 this.effect(ctx, 'created');
 

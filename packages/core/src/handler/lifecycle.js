@@ -29,6 +29,15 @@ export default function useLifecycle(Handler) {
                 is.Function(fn) && invoke(() => fn(...args));
             }
             this.bus.$emit(name, ...args);
+        },
+        targetHook(ctx, name, args) {
+            let hook = ctx.prop?.hook?.[name];
+            if (hook) {
+                hook = Array.isArray(hook) ? hook : [hook];
+                hook.forEach(fn => {
+                    invoke(() => fn({...args || {}, rule: ctx.rule, api: this.api}));
+                });
+            }
         }
     })
 }

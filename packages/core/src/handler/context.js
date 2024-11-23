@@ -4,7 +4,7 @@ import BaseParser from '../factory/parser';
 import {$del} from '@form-create/utils/lib/modify';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {condition, deepGet, invoke} from '../frame/util';
-import {computed, toRef, watch} from 'vue';
+import {computed, nextTick, toRef, watch} from 'vue';
 import {attrs} from '../frame/attrs';
 import {deepSet} from '@form-create/utils';
 import toArray from '@form-create/utils/lib/toarray';
@@ -98,8 +98,14 @@ export default function useContext(Handler) {
                         return;
                     }
                     this.watching = true;
+                    nextTick(() => {
+                        this.targetHook(ctx, 'watch', {key, oldValue: o, newValue: n});
+                    });
                     if (key === 'hidden' && Boolean(n) !== Boolean(o)) {
                         this.$render.clearCacheAll();
+                        nextTick(() => {
+                            this.targetHook(ctx, 'hidden', {value: n});
+                        });
                     }
                     if ((key === 'ignore' && ctx.input) || (key === 'hidden' && ctx.input && (ctx.rule.ignore === 'hidden' || this.options.ignoreHiddenFields))) {
                         this.syncForm();
@@ -350,6 +356,7 @@ export default function useContext(Handler) {
             this.$render.clearCache(ctx);
             ctx.delete();
             this.effect(ctx, 'deleted');
+            this.targetHook(ctx, 'deleted');
             input && !this.fieldCtx[field] && this.vm.emit('remove-field', field, ctx.rule, this.api);
             ctx.rule.__ctrl || this.vm.emit('remove-rule', ctx.rule, this.api);
             return ctx;

@@ -717,6 +717,7 @@ export interface FetchOption {
     action: String;
     method?: String;
     data?: Object;
+    query?: Object;
     dataType?: 'json';
     headers?: Object;
     withCredentials?: Boolean;

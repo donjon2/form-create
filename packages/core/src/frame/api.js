@@ -530,7 +530,7 @@ export default function Api(h) {
                 opt = deepCopy(opt);
                 opt = h.loadFetchVar(opt);
                 h.beforeFetch(opt).then(() => {
-                    return asyncFetch(opt, h.fc.create.fetch).then((res) => {
+                    return asyncFetch(opt, h.fc.create.fetch, api).then((res) => {
                         invoke(() => opt.onSuccess && opt.onSuccess(res));
                         resolve(res);
                     }).catch((e) => {
@@ -545,7 +545,7 @@ export default function Api(h) {
                 let _opt = deepCopy(opt);
                 _opt = h.loadFetchVar(_opt, get);
                 h.beforeFetch(_opt).then(() => {
-                    return asyncFetch(_opt, h.fc.create.fetch).then(res => {
+                    return asyncFetch(_opt, h.fc.create.fetch, api).then(res => {
                         invoke(() => _opt.onSuccess && _opt.onSuccess(res));
                         callback && callback(res, change);
                     }).catch(e => {

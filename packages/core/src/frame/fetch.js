@@ -31,7 +31,16 @@ export default function fetch(option) {
     }
 
     const xhr = new XMLHttpRequest();
-    const action = option.action;
+    let action = option.action || '';
+
+    if (option.query) {
+        const queryString = new URLSearchParams(option.query).toString();
+        if (action.includes('?')) {
+            action += `&${queryString}`;
+        } else {
+            action += `?${queryString}`;
+        }
+    }
 
     xhr.onerror = function error(e) {
         option.onError(e);
@@ -76,7 +85,7 @@ export default function fetch(option) {
 }
 
 
-export function asyncFetch(config, _fetch) {
+export function asyncFetch(config, _fetch, api) {
     return new Promise((resolve, reject) => {
         (_fetch || fetch)({
             ...config,
@@ -90,7 +99,7 @@ export function asyncFetch(config, _fetch) {
                         return deepGet(v, parse);
                     }
                 }
-                resolve(fn(res));
+                resolve(fn(res, undefined, api));
             },
             onError(err) {
                 reject(err);

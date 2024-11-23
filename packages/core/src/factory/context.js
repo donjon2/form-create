@@ -161,29 +161,15 @@ extend(RuleContext.prototype, {
     initProp() {
         const rule = {...this.rule};
         delete rule.children;
+        delete rule.validate;
         this.prop = mergeRule({}, [rule, ...Object.keys(this.payload).map(k => this.payload[k]), this.computed]);
+        this.prop.validate = [...this.refRule.__$validate.value || [], ...this.prop.validate || []]
     },
     initNone() {
         this.none = !(is.Undef(this.prop.display) || !!this.prop.display)
     },
     injectValidate() {
-        return toArray(this.prop.validate).map(item => {
-            if (is.Function(item.validator)) {
-                const temp = {...item};
-                const that = this;
-                temp.validator = function (...args) {
-                    return item.validator.call({
-                        that: this,
-                        id: that.id,
-                        field: that.field,
-                        rule: that.rule,
-                        api: that.$handle.api,
-                    }, ...args)
-                }
-                return temp;
-            }
-            return item;
-        });
+        return this.prop.validate;
     },
     check(handle) {
         return this.vm === handle.vm

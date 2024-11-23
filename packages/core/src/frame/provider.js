@@ -16,7 +16,7 @@ const loadData = function (fc) {
             const unwatchs = [];
             attrs.forEach(attr => {
                 if (attr && (attr.attr || attr.template)) {
-                    const unwatch = fc.watchLoadData(debounce((get) => {
+                    let fn = (get) => {
                         let value;
                         if (attr.template) {
                             value = fc.$handle.loadStrVar(attr.template, get);
@@ -37,7 +37,10 @@ const loadData = function (fc) {
                             deepSet(_rule, attr.to || 'options', value);
                         }
                         api.sync(rule);
-                    }, attr.wait || 300));
+                    };
+                    let callback = (get) => fn(get);
+                    const unwatch = fc.watchLoadData(callback);
+                    fn = debounce(fn, attr.wait || 300)
                     if (attr.watch !== false) {
                         unwatchs.push(unwatch);
                     } else {
@@ -56,10 +59,60 @@ const loadData = function (fc) {
             inject.clearProp();
         },
     };
-    loadData.watch = loadData.created;
+    loadData.watch = loadData.mounted;
     return loadData;
 }
 
+const t = function (fc) {
+    const t = {
+        name: 't',
+        _fn: [],
+        loaded(inject, rule, api) {
+            this.deleted(inject);
+            let attrs = inject.getValue() || {};
+            const unwatchs = [];
+            Object.keys(attrs).forEach(key => {
+                const attr = attrs[key];
+                if (attr) {
+                    const isObj = typeof attr === 'object';
+                    let fn = (get) => {
+                        let value = fc.t(isObj ? attr.attr : attr, isObj ? attr.params : null, get);
+                        const _rule = ((isObj && attr.modify) ? rule : inject.getProp());
+                        if (key === 'child') {
+                            if (_rule.children) {
+                                _rule.children[0] = value;
+                            } else {
+                                _rule.children = [value];
+                            }
+                        } else {
+                            deepSet(_rule, key, value);
+                        }
+                        api.sync(rule);
+                    };
+                    let callback = (get) => fn(get);
+                    const unwatch = fc.watchLoadData(callback);
+                    fn = debounce(fn, attr.wait || 300)
+                    if (attr.watch !== false) {
+                        unwatchs.push(unwatch);
+                    } else {
+                        unwatch();
+                    }
+                }
+            })
+            this._fn[inject.id] = unwatchs;
+        },
+        deleted(inject) {
+            if (this._fn[inject.id]) {
+                this._fn[inject.id].forEach(un => {
+                    un();
+                })
+            }
+            inject.clearProp();
+        },
+    };
+    t.watch = t.loaded;
+    return t;
+}
 
 const componentValidate = {
     name: 'componentValidate',
@@ -222,5 +275,6 @@ const fetch = function (fc) {
 export default {
     fetch,
     loadData,
+    t,
     componentValidate,
 };

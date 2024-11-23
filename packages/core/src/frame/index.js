@@ -1,5 +1,5 @@
 import $FormCreate from '../components/formCreate';
-import {createApp, h, nextTick, reactive, ref, watch} from 'vue';
+import {computed, createApp, h, nextTick, reactive, ref, watch} from 'vue';
 import makerFactory from '../factory/maker';
 import Handle from '../handler';
 import fetch from './fetch';
@@ -309,7 +309,7 @@ export default function FormCreateFactory(config) {
             options: ref({}),
             extendApiFn,
             fetchCache: new WeakMap(),
-            tmpData: {},
+            tmpData: reactive({}),
         })
         listener.forEach(item => {
             this.bus.$on(item.name, item.callback);
@@ -359,6 +359,19 @@ export default function FormCreateFactory(config) {
             if (this.renderDriver && this.renderDriver[method]) {
                 return invoke(() => this.renderDriver[method](...args));
             }
+        },
+        t(id, params, get) {
+            let value = get ? get('$t.' + id) : this.globalLanguageDriver(id);
+            if (value == null && this.vm.appContext.config.globalProperties.$i18n) {
+                return this.vm.appContext.config.globalProperties.$i18n.t(id, params);
+            }
+            if (value && params) {
+                Object.keys(params).forEach(param => {
+                    const regex = new RegExp(`{${param}}`, 'g');
+                    value = value.replace(regex, params[param]);
+                });
+            }
+            return value;
         },
         globalDataDriver(id) {
             let split = id.split('.');
@@ -422,6 +435,32 @@ export default function FormCreateFactory(config) {
                 }
             }
         },
+        getLocale() {
+            let locale = this.vm.props.locale;
+            if (locale && typeof locale === 'object') {
+                return locale.name;
+            }
+            if (typeof locale === 'string') {
+                return locale;
+            }
+            if (this.vm.appContext.config.globalProperties.$i18n && this.vm.appContext.config.globalProperties.$i18n.locale) {
+                return this.vm.appContext.config.globalProperties.$i18n.locale;
+            }
+            return 'zh-cn';
+        },
+        globalLanguageDriver(id) {
+            let locale = this.vm.props.locale;
+            let value = undefined;
+            if (locale && typeof locale === 'object') {
+                value = deepGet(locale, id);
+            }
+            if (value == null) {
+                const language = this.options.value.language || {};
+                const locale = this.getLocale();
+                value = deepGet(language[locale], id);
+            }
+            return value;
+        },
         globalVarDriver(id) {
             let split = id.split('.');
             const key = split.shift();
@@ -468,6 +507,12 @@ export default function FormCreateFactory(config) {
                 } else if (key === '$var') {
                     val = this.globalVarDriver(split.join('.'));
                     split = [];
+                } else if (key === '$locale') {
+                    val = this.getLocale();
+                    split = [];
+                }  else if (key === '$t') {
+                    val = this.globalLanguageDriver(split.join('.'));
+                    split = [];
                 } else {
                     const tmpData = this.vm.setupState.top.setupState.fc.tmpData;
                     val = hasProperty(tmpData, key) ? deepGet(tmpData, id) : getData(id);
@@ -492,7 +537,9 @@ export default function FormCreateFactory(config) {
                 if (unwatch[id]) {
                     return unwatch[id].val;
                 }
-                let val = this.getLoadData(id, def);
+                const data = computed(() => {
+                    return this.getLoadData(id, def);
+                })
                 const split = id.split('.');
                 const key = split.shift();
                 const key2 = split.shift() || '';
@@ -505,6 +552,9 @@ export default function FormCreateFactory(config) {
                         run(true);
                     }
                 }, 0);
+                const un = watch(data, (n) => {
+                    callback();
+                });
                 this.bus.$on('$loadData.' + key, callback);
                 if (key2) {
                     this.bus.$on('$loadData.' + key + '.' + key2, callback);
@@ -515,10 +565,11 @@ export default function FormCreateFactory(config) {
                         if (key2) {
                             this.bus.$off('$loadData.' + key + '.' + key2, callback);
                         }
+                        un();
                     }),
-                    val,
+                    val: data.value,
                 }
-                return val;
+                return data.value;
             }
             run(false);
             const un = () => {

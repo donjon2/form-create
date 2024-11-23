@@ -328,6 +328,13 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
             [key: string]: any;
         };
         required?: boolean | string | object;
+        t?: {
+            [key: string]: string | {
+                attr: string;
+                params?: Object;
+                modify?: boolean;
+            };
+        };
         loadData?: LoadDataEffectOption | Array<LoadDataEffectOption>;
         [key: string]: any;
     };
@@ -644,6 +651,10 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     setData(id: string, value?: any, isGlobal?: boolean): void;
 
     refreshData(id: string): void;
+
+    t(id: string, params?: Object): string|undefined;
+
+    getLocale(): string;
 
     bus: {
         $emit(event: string, ...args: any[]): void;

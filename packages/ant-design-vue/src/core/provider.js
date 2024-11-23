@@ -18,8 +18,12 @@ const required = {
                 ...val,
             };
             if (!validate.message) {
-                let title = rule.title || '';
-                validate.message = ((typeof title === 'object' ? title.title : title) || '') + '不能为空';
+                validate.message = rule.__fc__.refRule.__$title.value + (api.getLocale() === 'en' ? ' is required' : '不能为空');
+            } else {
+                const match = validate.message.match(/^\{\{\s*\$t\.(.+)\s*\}\}$/);
+                if (match) {
+                    validate.message = api.t(match[1], {title: rule.__fc__.refRule.__$title.value});
+                }
             }
             inject.getProp().validate = [validate];
         }

@@ -148,7 +148,11 @@ export default {
         if (this.options.form.title === false) return false;
         if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
         const titleSlot = this.getSlot('title');
-        const children = [titleSlot ? titleSlot({title: titleProp.title || '', rule: ctx.rule, options: this.options}) : titleProp.title];
+        const children = [titleSlot ? titleSlot({
+            title: ctx.refRule.__$title.value,
+            rule: ctx.rule,
+            options: this.options
+        }) : ctx.refRule.__$title.value];
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
@@ -165,7 +169,7 @@ export default {
 
             const field = 'content';
             if (infoProp.info && !hasProperty(prop.props, field)) {
-                prop.props[field] = infoProp.info;
+                prop.props[field] = ctx.refRule.__$info.value;
             }
             children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {
                 [titleProp.slot || 'default']: () => this.$r({
@@ -279,7 +283,8 @@ export default {
                     const fApi = this.$handle.api;
                     this.options.submitBtn.click
                         ? this.options.submitBtn.click(fApi)
-                        : fApi.submit().catch(()=>{});
+                        : fApi.submit().catch(() => {
+                        });
                 }
             },
             key: `${this.key}b1`,

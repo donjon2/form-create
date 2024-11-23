@@ -7,6 +7,7 @@ import {condition, deepGet, invoke} from '../frame/util';
 import {computed, toRef, watch} from 'vue';
 import {attrs} from '../frame/attrs';
 import {deepSet} from '@form-create/utils';
+import toArray from '@form-create/utils/lib/toarray';
 
 const noneKey = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'slotUpdate', 'computed', 'component', 'cache'];
 
@@ -130,6 +131,51 @@ export default function useContext(Handler) {
                     this.refresh();
                     this.watching = false;
                 }, {deep: !flag, sync: flag}));
+            });
+            ctx.refRule['__$title'] = computed(() => {
+                let title = (typeof ctx.rule.title === 'object' ? ctx.rule.title.title : ctx.rule.title) || '';
+                if (title) {
+                    const match = title.match(/^\{\{\s*\$t\.(.+)\s*\}\}$/);
+                    if (match) {
+                        title = this.api.t(match[1]);
+                    }
+                }
+                return title;
+            });
+            ctx.refRule['__$info'] = computed(() => {
+                let info = (typeof ctx.rule.info === 'object' ? ctx.rule.info.info : ctx.rule.info) || '';
+                if (info) {
+                    const match = info.match(/^\{\{\s*\$t\.(.+)\s*\}\}$/);
+                    if (match) {
+                        info = this.api.t(match[1]);
+                    }
+                }
+                return info;
+            });
+            ctx.refRule['__$validate'] = computed(() => {
+                return toArray(ctx.rule.validate).map(item => {
+                    const temp = {...item};
+                    if (temp.message) {
+                        const match = temp.message.match(/^\{\{\s*\$t\.(.+)\s*\}\}$/);
+                        if (match) {
+                            temp.message = this.api.t(match[1], {title: ctx.refRule.__$title.value});
+                        }
+                    }
+                    if (is.Function(temp.validator)) {
+                        const that = ctx;
+                        temp.validator = function (...args) {
+                            return item.validator.call({
+                                that: this,
+                                id: that.id,
+                                field: that.field,
+                                rule: that.rule,
+                                api: that.$handle.api,
+                            }, ...args)
+                        }
+                        return temp;
+                    }
+                    return temp;
+                });
             });
             if (ctx.input) {
                 const val = toRef(ctx.rule, 'value');

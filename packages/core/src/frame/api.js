@@ -564,6 +564,12 @@ export default function Api(h) {
         refreshData(id) {
             return h.fc.refreshData(id);
         },
+        t(id, params) {
+            return h.fc.t(id, params);
+        },
+        getLocale() {
+            return h.fc.getLocale();
+        },
         helper: {
             tidyFields, props
         }

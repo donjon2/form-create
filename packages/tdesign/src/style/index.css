@@ -21,3 +21,7 @@
 .form-create.is-preview .fc-clock, .form-create .fc-none, .form-create.is-preview .t-form__label--required > label::before {
     display: none !important;
 }
+
+.fc-form-footer {
+    margin-top: 12px;
+}

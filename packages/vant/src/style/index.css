@@ -14,11 +14,11 @@
     display: block;
 }
 
-.form-create-m ._fc-form-item > .van-field__value > .van-field__body > .van-field__control > .van-cell {
+.form-create-m .fc-form-item > .van-field__value > .van-field__body > .van-field__control > .van-cell {
     padding: 0;
 }
 
-.form-create-m ._fc-form-item ._fc-form-item {
+.form-create-m .fc-form-item .fc-form-item {
     padding-left: 0;
     padding-right: 0;
     --van-padding-md: 0;
@@ -28,11 +28,11 @@
     display: none;
 }
 
-.form-create-m ._fc-reset-btn {
-    margin-top: 10px;
+.form-create-m .fc-reset-btn {
+    margin-top: 12px;
 }
 
-.form-create-m ._fc-title {
+.form-create-m .fc-form-title {
     display: inline-flex;
     align-items: center;
 }

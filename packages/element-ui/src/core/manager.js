@@ -130,7 +130,7 @@ export default {
                 prop: ctx.id,
                 rules: ctx.injectValidate(),
             },
-            class: rule.className,
+            class: this.$render.mergeClass(rule.className, 'fc-form-item'),
             key: `${uni}fi`,
             ref: ctx.wrapRef,
             type: 'formItem',
@@ -187,6 +187,7 @@ export default {
         const _prop = mergeProps([titleProp, {
             props: tidyRule(titleProp),
             key: `${uni}tit`,
+            class: 'fc-form-title',
             type: titleProp.type || 'span',
         }]);
 
@@ -199,7 +200,7 @@ export default {
     makeCol(rule, uni, children) {
         const col = rule.col;
         return this.$r({
-            class: col.class,
+            class: this.$render.mergeClass(col.class, 'fc-form-col'),
             type: 'col',
             props: col || {span: 24},
             key: `${uni}col`
@@ -210,7 +211,7 @@ export default {
         return this.$r({
             type: 'row',
             props: row,
-            class: row.class,
+            class: this.$render.mergeClass(row.class, 'fc-form-row'),
             key: `${this.key}row`
         }, children)
     },
@@ -227,6 +228,7 @@ export default {
         }
         const item = this.$r({
             type: 'formItem',
+            class: 'fc-form-item',
             key: `${this.key}fb`
         }, vn);
 
@@ -234,6 +236,7 @@ export default {
             ? item
             : this.$r({
                 type: 'col',
+                class: 'fc-form-col fc-form-footer',
                 props: {span: 24},
                 key: `${this.key}fc`
             }, [item]);
@@ -249,7 +252,7 @@ export default {
         return this.$r({
             type: 'button',
             props: resetBtn,
-            class: '_fc-reset-btn',
+            class: 'fc-reset-btn',
             style: {width: resetBtn.width},
             on: {
                 click: () => {
@@ -272,7 +275,7 @@ export default {
         return this.$r({
             type: 'button',
             props: submitBtn,
-            class: '_fc-submit-btn',
+            class: 'fc-submit-btn',
             style: {width: submitBtn.width},
             on: {
                 click: () => {

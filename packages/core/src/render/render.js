@@ -184,13 +184,17 @@ export default function useRender(Render) {
         },
         none(vn) {
             if (vn) {
-                if (Array.isArray(vn.props.class)) {
-                    vn.props.class.push('fc-none');
-                } else {
-                    vn.props.class = vn.props.class ? [vn.props.class, 'fc-none'] : 'fc-none';
-                }
+                vn.props.class = this.mergeClass(vn.props.class, 'fc-none')
                 return vn;
             }
+        },
+        mergeClass(target, value) {
+            if (Array.isArray(target)) {
+                target.push(value);
+            } else {
+                return target ? [target, value] : value;
+            }
+            return target;
         },
         stable(vn) {
             const list = Array.isArray(vn) ? vn : [vn];

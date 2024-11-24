@@ -74,7 +74,7 @@ export default defineComponent({
             }
         },
         update(fileList) {
-            let files = fileList.map((v) => v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined);
+            let files = fileList.map((v) => v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined && url.indexOf('blob:') !== 0);
             this.$emit('update:modelValue', files);
         },
         handleCancel() {

@@ -365,6 +365,9 @@ export default function FormCreateFactory(config) {
             if (value == null && this.vm.appContext.config.globalProperties.$i18n) {
                 return this.vm.appContext.config.globalProperties.$i18n.t(id, params);
             }
+            if (value == null) {
+                value = '';
+            }
             if (value && params) {
                 Object.keys(params).forEach(param => {
                     const regex = new RegExp(`{${param}}`, 'g');

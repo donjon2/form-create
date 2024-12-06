@@ -33,7 +33,7 @@ export default defineComponent({
     },
     props: {
         modelValue: {
-            type: Array,
+            type: [Array, String, Object],
             default: () => []
         },
         onSuccess: {

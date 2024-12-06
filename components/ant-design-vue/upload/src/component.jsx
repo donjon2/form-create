@@ -40,7 +40,7 @@ export default defineComponent({
             default: 0
         },
         modelValue: {
-            type: Array,
+            type: [Array, String, Object],
             default: () => []
         },
         onSuccess: {

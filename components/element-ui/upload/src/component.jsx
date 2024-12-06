@@ -42,7 +42,7 @@ export default defineComponent({
         onPreview: Function,
         modalTitle: String,
         listType: String,
-        modelValue: [Array, String]
+        modelValue: [Array, String, Object]
     },
     emits: ['update:modelValue', 'change', 'remove', 'fc.el'],
     data() {
@@ -74,7 +74,7 @@ export default defineComponent({
             }
         },
         update(fileList) {
-            let files = fileList.map((v) => v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined && url.indexOf('blob:') !== 0);
+            let files = fileList.map((v) => v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined);
             this.$emit('update:modelValue', files);
         },
         handleCancel() {

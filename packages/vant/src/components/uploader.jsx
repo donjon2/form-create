@@ -28,7 +28,7 @@ export default defineComponent({
     inheritAttrs: false,
     props: {
         formCreateInject: Object,
-        modelValue: Array,
+        modelValue: [Array, String, Object],
         afterRead: Function,
         action: String,
         headers: Object,

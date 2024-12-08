@@ -751,7 +751,6 @@ export interface FetchOption {
     action: String;
     method?: String;
     data?: Object;
-    query?: Object;
     dataType?: 'json';
     headers?: Object;
     withCredentials?: Boolean;
@@ -765,6 +764,7 @@ export interface FetchEffectOption {
     parse?: String | ((body: any, rule: Object, api: Object) => any);
     method?: String;
     data?: Object;
+    query?: Object;
     dataType?: 'json';
     headers?: Object;
     withCredentials?: Boolean;

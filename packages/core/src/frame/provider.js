@@ -55,6 +55,7 @@ const loadData = function (fc) {
                 this._fn[inject.id].forEach(un => {
                     un();
                 })
+                delete this._fn[inject.id];
             }
             inject.clearProp();
         },
@@ -106,6 +107,7 @@ const t = function (fc) {
                 this._fn[inject.id].forEach(un => {
                     un();
                 })
+                delete this._fn[inject.id];
             }
             inject.clearProp();
         },
@@ -263,6 +265,7 @@ const fetch = function (fc) {
         deleted(inject) {
             if (this._fn[inject.id]) {
                 this._fn[inject.id]();
+                delete this._fn[inject.id];
             }
             inject.clearProp();
         },

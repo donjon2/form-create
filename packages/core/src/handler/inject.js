@@ -71,7 +71,7 @@ export default function useInject(Handler) {
         },
         getInjectData(self, inject) {
             const $api = self.__fc__ && self.__fc__.$api;
-            const vm = (self.__fc__ && self.__fc__.$handle.vm) || this.vm.props;
+            const vm = (self.__fc__ && self.__fc__.$handle.vm) || this.vm;
             const {option, rule} = vm.props;
             return {
                 $f: $api || this.api,

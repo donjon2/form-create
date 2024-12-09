@@ -682,6 +682,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     getData(id: string, defaultValue?: any): any;
 
+    watchData(fn: (get: (id: string, defaultValue?: any) => any, change: boolean) => void): () => void;
+
     setData(id: string, value?: any, isGlobal?: boolean): void;
 
     refreshData(id: string): void;

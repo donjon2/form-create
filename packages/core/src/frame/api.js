@@ -558,6 +558,11 @@ export default function Api(h) {
         getData(id, def) {
             return h.fc.getLoadData(id, def);
         },
+        watchData(fn) {
+            return h.fc.watchLoadData((get, change) => {
+                invoke(() => fn(get, change));
+            })
+        },
         setData(id, data, isGlobal) {
             return h.fc.setData(id, data, isGlobal);
         },

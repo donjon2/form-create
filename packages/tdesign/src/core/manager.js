@@ -219,10 +219,13 @@ export default {
         const item = this.$r({
             type: 'formItem',
             class: 'fc-form-item',
+            props: {
+                label: this.rule.props.layout === 'inline' ? '' : ' ',
+            },
             key: `${this.key}fb`
         }, vn);
 
-        return this.rule.props.inline === true
+        return this.rule.props.layout === 'inline'
             ? item
             : this.$r({
                 type: 'col',

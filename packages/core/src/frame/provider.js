@@ -176,6 +176,9 @@ const fetch = function (fc) {
             } else {
                 deepSet(inject.getProp(), option.to || 'options', val);
             }
+            if (val != null && option && option.key && fc.$handle.options.globalData[option.key]) {
+                fc.fetchCache.set(fc.$handle.options.globalData[option.key], {status: true, data: val});
+            }
             api.sync(rule);
         }
 

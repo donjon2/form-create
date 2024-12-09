@@ -32,14 +32,12 @@
 - 支持子表单和分组
 - 高性能
 - **适配移动端**
+- **多语言**
 
 ## 支持的UI框架
-- element-plus
-- ant-design-vue
-- naive-ui
-- arco-design
-- tdesign
-- vant
+
+[![FcDesigner](https://static.form-create.com/file/img/products.jpg)](https://form-create.com/)
+
 
 > 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！本项目还在不断开发完善中,如有任何建议或问题[请在这里提出](https://github.com/xaboy/form-create/issues/new)
 

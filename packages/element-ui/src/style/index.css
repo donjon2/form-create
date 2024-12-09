@@ -10,11 +10,13 @@
     display: none !important;
 }
 
-.fc-wrap-right .el-form-item__label {
+.fc-wrap-right > .el-form-item__label {
+    display: flex;
     justify-content: flex-end;
 }
 
-.fc-wrap-left .el-form-item__label {
+.fc-wrap-left > .el-form-item__label {
+    display: flex;
     justify-content: flex-start;
 }
 
@@ -22,7 +24,7 @@
     display: block;
 }
 
-.fc-wrap-top.el-form-item .el-form-item__label {
+.fc-wrap-top.el-form-item > .el-form-item__label {
     display: block;
     height: auto;
     line-height: 22px;
@@ -30,17 +32,17 @@
     text-align: left;
 }
 
-.el-form--large .fc-wrap-top.el-form-item .el-form-item__label {
+.el-form--large .fc-wrap-top.el-form-item > .el-form-item__label {
     line-height: 22px;
     margin-bottom: 12px;
 }
 
-.el-form--default .fc-wrap-top.el-form-item .el-form-item__label {
+.el-form--default .fc-wrap-top.el-form-item > .el-form-item__label {
     line-height: 22px;
     margin-bottom: 8px;
 }
 
-.el-form--small .fc-wrap-top.el-form-item .el-form-item__label {
+.el-form--small .fc-wrap-top.el-form-item > .el-form-item__label {
     line-height: 20px;
     margin-bottom: 4px;
 }

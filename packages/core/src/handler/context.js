@@ -10,6 +10,7 @@ import {deepSet} from '@form-create/utils';
 import toArray from '@form-create/utils/lib/toarray';
 
 const noneKey = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'slotUpdate', 'computed', 'component', 'cache'];
+const oldValueTag = Symbol('oldValue');
 
 export default function useContext(Handler) {
     extend(Handler.prototype, {
@@ -206,7 +207,7 @@ export default function useContext(Handler) {
                         const item = computedRule[k];
                         if (!item) return undefined;
                         const value = this.compute(ctx, item);
-                        if (item.linkage && value === undefined) {
+                        if (item.linkage && value === oldValueTag) {
                             return oldValue;
                         }
                         return value;
@@ -273,7 +274,7 @@ export default function useContext(Handler) {
                 let val = checkCondition(item);
                 val = item.invert === true ? !val : val;
                 if (item.linkage) {
-                    return val ? invoke(() => this.computeValue(item.linkage, ctx, group), undefined) : undefined;
+                    return val ? invoke(() => this.computeValue(item.linkage, ctx, group), undefined) : oldValueTag;
                 }
                 return val;
             } else if (is.Function(item)) {

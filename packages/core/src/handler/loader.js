@@ -1,5 +1,5 @@
 import extend from '@form-create/utils/lib/extend';
-import {byCtx, condition, copyRule, enumerable, getRule, invoke, parseFn} from '../frame/util';
+import {byCtx, condition, copyRule, enumerable, getRule, invoke, parseFn, parseJson, toJson} from '../frame/util';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {baseRule} from '../factory/creator';
 import RuleContext from '../factory/context';
@@ -52,8 +52,8 @@ export default function useLoader(Handler) {
             const rule = ctx.rule;
             is.trueArray(rule.sync) && mergeProps([{
                 on: rule.sync.reduce((pre, prop) => {
-                    pre[`update:${prop}`] = (val) => {
-                        rule.props[prop] = val;
+                    pre[(typeof prop === 'object' && prop.event) || `update:${prop}`] = (val) => {
+                        rule.props[(typeof prop === 'object' && prop.prop) || prop] = val;
                         this.vm.emit('sync', prop, val, rule, this.fapi);
                     }
                     return pre
@@ -150,7 +150,7 @@ export default function useLoader(Handler) {
                             if (isCtrl(ctx)) {
                                 return;
                             }
-                            rules[index] = _rule = _rule._clone ? _rule._clone() : copyRule(_rule);
+                            rules[index] = _rule = _rule._clone ? _rule._clone() : parseJson(toJson(_rule));
                             ctx = null;
                             isCopy = true;
                         }

@@ -525,7 +525,7 @@ export default function FormCreateFactory(config) {
             }
             return (val == null || val === '') ? def : val;
         },
-        watchLoadData(fn) {
+        watchLoadData(fn, wait) {
             let unwatch = {};
 
             const run = (flag) => {
@@ -558,7 +558,7 @@ export default function FormCreateFactory(config) {
                         unwatch[id].val = temp;
                         run(true);
                     }
-                }, 0);
+                }, wait || 0);
                 const un = watch(data, (n) => {
                     callback();
                 });
@@ -605,7 +605,7 @@ export default function FormCreateFactory(config) {
             this.updateOptions(options);
         },
         mergeOptions(target, opt, parent) {
-            opt = deepCopy(opt);
+            opt = {...opt || {}};
             parent && ['page', 'onSubmit', 'onReset', 'onCreated', 'onChange', 'onMounted', 'mounted', 'onReload', 'reload', 'formData', 'el', 'globalClass', 'style'].forEach((n) => {
                 delete opt[n];
             });

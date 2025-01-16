@@ -40,8 +40,10 @@ export default defineComponent({
     props: {
         previewMask: undefined,
         onPreview: Function,
+        httpRequest: Function,
         modalTitle: String,
         listType: String,
+        formCreateInject: Object,
         modelValue: [Array, String, Object]
     },
     emits: ['update:modelValue', 'change', 'remove', 'fc.el'],
@@ -89,7 +91,15 @@ export default defineComponent({
         handleRemove(file, fileList) {
             this.$emit('remove', ...arguments);
             this.update(fileList);
-        }
+        },
+        doHttpRequest(option) {
+            if (this.httpRequest) {
+                return this.httpRequest(option);
+            } else {
+                option.source = 'upload';
+                this.formCreateInject.api.fetch(option);
+            }
+        },
     },
     render() {
         const len = toArray(this.modelValue).length;
@@ -97,7 +107,7 @@ export default defineComponent({
             <div class="_fc-upload"><ElUpload key={len} {...this.$attrs} listType={this.listType || 'picture-card'}
                 class={{'_fc-exceed': this.$attrs.limit ? this.$attrs.limit <= len : false}}
                 onPreview={this.handlePreview} onChange={this.handleChange}
-                onRemove={this.handleRemove}
+                onRemove={this.handleRemove} httpRequest={this.doHttpRequest}
                 fileList={this.fileList}
                 v-slots={getSlot(this.$slots, ['default'])} ref="upload">
                 {((this.$slots.default?.()) ||

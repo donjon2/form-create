@@ -50,6 +50,8 @@ export default defineComponent({
         onPreview: Function,
         listType: String,
         modalTitle: String,
+        customRequest: Function,
+        formCreateInject: Object,
         previewMask: undefined,
     },
     emits: ['update:modelValue', 'change', 'fc.el'],
@@ -92,6 +94,14 @@ export default defineComponent({
         input() {
             this.$emit('update:modelValue', this.uploadList.map(v => v.is_string ? v.url : (v.value || v.url)));
         },
+        doCustomRequest(option) {
+            if(this.customRequest) {
+                return this.customRequest(option);
+            } else {
+                option.source = 'upload';
+                this.formCreateInject.api.fetch(option);
+            }
+        },
     },
     render() {
         const isShow = (!this.limit || this.limit > this.uploadList.length);
@@ -100,7 +110,7 @@ export default defineComponent({
         return <>
             <AUpload maxCount={this.limit} listType={this.listType || 'picture-card'} {...this.$attrs}
                 onPreview={this.handlePreview}
-                onChange={this.handleChange} fileList={this.uploadList}
+                onChange={this.handleChange} fileList={this.uploadList} customRequest={this.doCustomRequest}
                 ref="upload" v-slots={getSlot(this.$slots, ['default'])}>
                 {isShow ? (this.$slots.default?.() || ['text', 'picture'].indexOf(this.listType) === -1
                     ? <PlusOutlined style="font-size: 16px; width: 16px;"/>

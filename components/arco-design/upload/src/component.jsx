@@ -41,6 +41,8 @@ export default defineComponent({
             required: true
         },
         onPreview: Function,
+        customRequest: Function,
+        formCreateInject: Object,
         modalTitle: String,
         previewMask: undefined,
     },
@@ -79,12 +81,30 @@ export default defineComponent({
                 this.previewImage = file.url;
                 this.previewVisible = true;
             }
+        },
+        doCustomRequest(option) {
+            if (this.customRequest) {
+                return this.customRequest(option);
+            } else {
+                const onProgress = option.onProgress;
+                if (!option.data) {
+                    option.data = {}
+                }
+                option.method = 'post';
+                option.file = option.fileItem.file;
+                if (onProgress) {
+                    option.onProgress = (evt) => {
+                        onProgress(evt.percent, evt);
+                    }
+                }
+                this.formCreateInject.api.fetch(option);
+            }
         }
     },
     render() {
         return <>
             <AUpload listType={'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
-                onSuccess={this.handleChange}
+                onSuccess={this.handleChange} customRequest={this.doCustomRequest}
                 ref="upload" fileList={this.uploadList} onUpdate:fileList={this.inputRemove}
                 v-slots={this.$slots}/>
             <aModal mask={this.previewMask} title={this.modalTitle} visible={this.previewVisible}

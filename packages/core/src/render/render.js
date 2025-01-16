@@ -133,6 +133,12 @@ export default function useRender(Render) {
                         } else if (ctx.parser.loadChildren !== false) {
                             children = this.renderChildren(_load, ctx);
                         }
+                        Object.keys(prop.renderSlots || {}).forEach(key => {
+                            children[key] = () => {
+                                const rule = this.parseSide(prop.renderSlots[key], ctx);
+                                return this.renderRule(rule);
+                            }
+                        })
                         const slot = this.getTypeSlot(ctx);
                         let _vn;
                         if (slot) {

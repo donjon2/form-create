@@ -19,7 +19,7 @@ import {deepCopy} from '@form-create/utils/lib/deepextend';
 import Mitt from '@form-create/utils/lib/mitt';
 import html from '../parser/html';
 import uniqueId from '@form-create/utils/lib/unique';
-import {cookieDriver, localStorageDriver} from './dataDriver';
+import {cookieDriver, localStorageDriver, sessionStorageDriver} from './dataDriver';
 import debounce from '@form-create/utils/lib/debounce';
 import {deepSet} from '@form-create/utils';
 
@@ -714,6 +714,7 @@ export default function FormCreateFactory(config) {
 
     setDataDriver('$cookie', cookieDriver);
     setDataDriver('$localStorage', localStorageDriver);
+    setDataDriver('$sessionStorage', sessionStorageDriver);
 
     CreateNode.use({fragment: 'fcFragment'});
 

@@ -154,6 +154,7 @@ export default defineComponent({
             if (this.cacheValue[key] === JSON.stringify(field ? value[field] : value)) {
                 return;
             }
+            this.cacheRule[key].$f && this.cacheRule[key].$f.setValue(value);
             this.cache(key, value);
         },
         addRule(i, emit) {

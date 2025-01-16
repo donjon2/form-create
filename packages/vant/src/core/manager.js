@@ -135,10 +135,10 @@ export default {
         const infoProp = {...rule.info};
         const titleSlot = this.getSlot('title');
         const children = [titleSlot ? titleSlot({
-            title: ctx.refRule.__$title.value,
+            title: ctx.refRule?.__$title.value,
             rule: ctx.rule,
             options: this.options
-        }) : ctx.refRule.__$title.value];
+        }) : ctx.refRule?.__$title.value];
         const flag = !isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon);
         if (flag) {
             children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r({
@@ -156,7 +156,7 @@ export default {
 
         if (flag && infoProp.info && !_prop.props.onClick) {
             _prop.props.onClick = () => {
-                showNotify({type: 'warning', message: ctx.refRule.__$info.value, duration: 1000});
+                showNotify({type: 'warning', message: ctx.refRule?.__$info.value, duration: 1000});
             }
         }
 

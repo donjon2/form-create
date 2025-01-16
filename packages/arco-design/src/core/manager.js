@@ -149,10 +149,10 @@ export default {
         if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
         const titleSlot = this.getSlot('title');
         const children = [titleSlot ? titleSlot({
-            title: ctx.refRule.__$title.value,
+            title: ctx.refRule?.__$title.value,
             rule: ctx.rule,
             options: this.options
-        }) : ctx.refRule.__$title.value];
+        }) : ctx.refRule?.__$title.value];
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
@@ -169,7 +169,7 @@ export default {
 
             const field = 'content';
             if (infoProp.info && !hasProperty(prop.props, field)) {
-                prop.props[field] = ctx.refRule.__$info.value;
+                prop.props[field] = ctx.refRule?.__$info.value;
             }
             children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {
                 [titleProp.slot || 'default']: () => this.$r({

@@ -113,7 +113,7 @@ export default defineComponent({
                 {((this.$slots.default?.()) ||
                     (['text', 'picture'].indexOf(this.listType) === -1 ? <ElIcon>
                         <IconUpload/>
-                    </ElIcon> : <ElButton type="primary">点击上传</ElButton>)
+                    </ElIcon> : <ElButton type="primary">{this.formCreateInject.t('clickToUpload') || '点击上传'}</ElButton>)
                 )}
             </ElUpload>
             <ElDialog appendToBody={true} modal={this.previewMask} title={this.modalTitle}

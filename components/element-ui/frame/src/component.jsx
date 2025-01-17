@@ -48,11 +48,11 @@ export default defineComponent({
         },
         okBtnText: {
             type: String,
-            default: '确定'
+            default: ''
         },
         closeBtnText: {
             type: String,
-            default: '关闭'
+            default: ''
         },
         modalTitle: String,
         handleIcon: {
@@ -296,9 +296,9 @@ export default defineComponent({
             }
             return <div>
                 {closeBtn ? <ElButton
-                    onClick={() => (this.onCancel() !== false && (this.frameVisible = false))}>{closeBtnText}</ElButton> : null}
+                    onClick={() => (this.onCancel() !== false && (this.frameVisible = false))}>{closeBtnText || this.formCreateInject.t('close') || '关闭'}</ElButton> : null}
                 {okBtn ? <ElButton type="primary"
-                    onClick={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</ElButton> : null}
+                    onClick={() => (this.onOk() !== false && this.closeModel())}>{okBtnText || this.formCreateInject.t('ok') || '确定'}</ElButton> : null}
             </div>
         }
     },

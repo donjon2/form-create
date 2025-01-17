@@ -48,11 +48,11 @@ export default defineComponent({
         },
         okBtnText: {
             type: String,
-            default: '确定'
+            default: ''
         },
         closeBtnText: {
             type: String,
-            default: '关闭'
+            default: ''
         },
         modalTitle: String,
         handleIcon: {
@@ -296,10 +296,10 @@ export default defineComponent({
 
             if (closeBtn)
                 node.push(<AButton
-                    onClick={() => (this.onCancel() !== false && this.closeModal(true))}>{closeBtnText}</AButton>);
+                    onClick={() => (this.onCancel() !== false && this.closeModal(true))}>{closeBtnText || this.formCreateInject.t('close') || '关闭'}</AButton>);
             if (okBtn)
                 node.push(<AButton type="primary"
-                    onClick={() => (this.onOk() !== false && this.closeModal())}>{okBtnText}</AButton>);
+                    onClick={() => (this.onOk() !== false && this.closeModal())}>{okBtnText || this.formCreateInject.t('ok') || '确定'}</AButton>);
             return node;
         }
     },

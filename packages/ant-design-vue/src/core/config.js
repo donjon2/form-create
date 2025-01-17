@@ -21,7 +21,7 @@ export default function getConfig() {
             disabled: false,
             loading: false,
             type: 'primary',
-            innerText: '提交',
+            innerText: '',
             show: true,
             col: UNDEF,
             click: UNDEF,
@@ -30,7 +30,7 @@ export default function getConfig() {
             disabled: false,
             loading: false,
             type: 'default',
-            innerText: '重置',
+            innerText: '',
             show: false,
             col: UNDEF,
             click: UNDEF

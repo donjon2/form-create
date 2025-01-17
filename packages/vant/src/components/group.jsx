@@ -94,7 +94,7 @@ export default defineComponent({
         modelValue: {
             handler(n) {
                 n = n || [];
-                let keys = Object.keys(this.sort), total = keys.length, len = total - n.length;
+                let keys = this.sort, total = keys.length, len = total - n.length;
                 if (len < 0) {
                     for (let i = len; i < 0; i++) {
                         this.addRule(n.length + i, true);
@@ -275,7 +275,7 @@ export default defineComponent({
         const keys = this.sort;
         const button = this.button;
         const Type = this.form;
-        const disabled = this.$props.disabled;
+        const disabled = this.disabled;
 
         const children = keys.length === 0 ?
             (this.$slots.default ? (this.$slots.default({

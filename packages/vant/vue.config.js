@@ -16,5 +16,6 @@ module.exports = {
                 },
             ]
         }
-    }
+    },
+    transpileDependencies: ['@form-create']
 }

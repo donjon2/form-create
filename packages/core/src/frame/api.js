@@ -393,7 +393,11 @@ export default function Api(h) {
                 });
             });
             nextTick(() => {
-                api.clearValidateState();
+                nextTick(() => {
+                    nextTick(() => {
+                        api.clearValidateState(fields);
+                    });
+                });
             });
             if (fields == null) {
                 is.Function(h.options.onReset) && invoke(() => h.options.onReset(api));

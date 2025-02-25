@@ -91,7 +91,7 @@ export default defineComponent({
         }
     },
     render() {
-        return <van-uploader {...this.$attrs} model-value={this.fileList}
+        return <van-uploader {...this.$attrs} model-value={this.fileList} maxCount={this.maxCount}
             onUpdate:model-value={(v) => this.fileList = v}
             afterRead={this.uploadFile} onDelete={this.onDelete}/>
     }

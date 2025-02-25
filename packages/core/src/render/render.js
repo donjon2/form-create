@@ -95,7 +95,7 @@ export default function useRender(Render) {
             try {
                 if (ctx.type === 'hidden') return;
                 const rule = ctx.rule;
-                if ((!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
+                if (this.force || (!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
                     let vn;
                     ctx.initProp();
                     this.mergeGlobal(ctx);
@@ -134,7 +134,10 @@ export default function useRender(Render) {
                             children = this.renderChildren(_load, ctx);
                         }
                         Object.keys(prop.renderSlots || {}).forEach(key => {
-                            children[key] = () => {
+                            children[key] = (...args) => {
+                                if (is.Function(prop.renderSlots[key])) {
+                                    return invoke(() => prop.renderSlots[key](...args));
+                                }
                                 const rule = this.parseSide(prop.renderSlots[key], ctx);
                                 return this.renderRule(rule);
                             }
@@ -284,12 +287,14 @@ export default function useRender(Render) {
             ]
 
             if (ctx.input) {
+                const tmpInput = this.tmpInput;
                 if (this.vm.props.disabled === true) {
                     ctx.prop.props.disabled = true;
                 }
                 const field = this.getModelField(ctx);
                 const model = {
                     callback: (value) => {
+                        tmpInput && tmpInput(ctx.field, value, ctx.rule);
                         this.onInput(ctx, value);
                     },
                     modelField: field,
@@ -359,6 +364,23 @@ export default function useRender(Render) {
             if (this.vNode[ctx.originType])
                 return this.vNode[ctx.originType](prop, children);
             return this.vNode.make(lower(prop.type), prop, children);
+        },
+        createChildrenVnodes(ctx, onInput, force) {
+            this.force = force !== false;
+            this.tmpInput = onInput;
+            const res = this.renderChildren(ctx.rule.children, ctx);
+            this.force = false;
+            this.tmpInput = null;
+            return res;
+        },
+        createRuleVnode(ctx, onInput, force) {
+            this.force = force !== false;
+            this.tmpInput = onInput;
+            const slotBag = makeSlotBag();
+            this.renderSlot(slotBag, ctx, ctx.parent);
+            this.force = false;
+            this.tmpInput = null;
+            return slotBag.getSlots();
         },
         renderRule(rule, children, origin) {
             if (!rule) return undefined;

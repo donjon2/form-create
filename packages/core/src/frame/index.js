@@ -256,7 +256,7 @@ export default function FormCreateFactory(config) {
         const split = (id || '').split('.');
         id = split.shift();
         const field = split.join('.');
-        if(!hasProperty(loadData, id)){
+        if (!hasProperty(loadData, id)) {
             loadData[id] = defValueTag;
         }
         if (loadData[id] !== defValueTag) {
@@ -305,7 +305,6 @@ export default function FormCreateFactory(config) {
             },
             drivers,
             renderDriver: null,
-            get: null,
             refreshData,
             loadData,
             CreateNode,
@@ -470,7 +469,17 @@ export default function FormCreateFactory(config) {
             if (option) {
                 const handle = is.Function(option) ? option : parseFn(option.handle);
                 if (handle) {
-                    return deepGet(invoke(() => handle(this.get || ((...args) => this.getLoadData(...args)), this.$handle.api)), split);
+                    let val;
+                    const unwatch = this.watchLoadData((get, flag) => {
+                        if (flag) {
+                            this.bus.$emit('$loadData.$var.' + key);
+                            unwatch();
+                        } else {
+                            val = handle(get, this.$handle.api);
+                        }
+                    });
+                    this.unwatch.push(unwatch);
+                    return val;
                 }
             }
         },
@@ -507,7 +516,7 @@ export default function FormCreateFactory(config) {
                     split = [];
                 } else {
                     const tmpData = this.vm.setupState.top.setupState.fc.tmpData;
-                    if(!hasProperty(tmpData, key)){
+                    if (!hasProperty(tmpData, key)) {
                         tmpData[key] = defValueTag;
                     }
                     val = tmpData[key] !== defValueTag ? deepGet(tmpData, id) : getData(id);
@@ -523,29 +532,28 @@ export default function FormCreateFactory(config) {
             let unwatch = {};
 
             const run = (flag) => {
-                if (!this.get) {
-                    this.get = get;
-                }
                 invoke(() => {
                     fn(get, flag);
                 });
-                if (this.get === get) {
-                    this.get = undefined;
-                }
             };
 
             const get = (id, def) => {
+                let getValue;
+                if (typeof id === 'object') {
+                    getValue = id.getValue;
+                    id = id.id;
+                }
                 if (unwatch[id]) {
                     return unwatch[id].val;
                 }
                 const data = computed(() => {
-                    return this.getLoadData(id, def);
+                    return getValue ? getValue() : this.getLoadData(id, def);
                 })
                 const split = id.split('.');
                 const key = split.shift();
                 const key2 = split.shift() || '';
                 const callback = debounce(() => {
-                    const temp = this.getLoadData(id, def);
+                    const temp = getValue ? getValue() : this.getLoadData(id, def);
                     if (!unwatch[id]) {
                         return;
                     } else if (JSON.stringify(temp) !== JSON.stringify(unwatch[id].val)) {

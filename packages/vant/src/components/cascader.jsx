@@ -15,7 +15,7 @@ export default defineComponent({
         minDate: [String, Date],
         maxDate: [String, Date],
     },
-    emits: ['update:modelValue', 'fc.el'],
+    emits: ['update:modelValue', 'fc.el', 'change'],
     setup(props, _) {
         const show = ref(false);
         const modelValue = toRef(props, 'modelValue');
@@ -57,6 +57,7 @@ export default defineComponent({
 
         const onInput = (val) => {
             _.emit('update:modelValue', val);
+            _.emit('change', val);
         }
 
         return {

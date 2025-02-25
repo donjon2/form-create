@@ -9,7 +9,7 @@ export default defineComponent({
         modelValue: Array,
         options: Array,
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'change'],
     setup(props, _) {
         const modelValue = toRef(props, 'modelValue', []);
         const options = toRef(props, 'options');
@@ -19,6 +19,7 @@ export default defineComponent({
             modelValue,
             onInput(val) {
                 _.emit('update:modelValue', val);
+                _.emit('change', val);
             },
         }
     },

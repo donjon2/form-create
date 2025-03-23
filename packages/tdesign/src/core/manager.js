@@ -146,7 +146,7 @@ export default {
         const infoProp = {...rule.info};
         const form = this.options.form;
         const titleSlot = this.getSlot('title');
-        const children = [titleSlot ? titleSlot({title: ctx.refRule?.__$title.value, rule: ctx.rule, options: this.options}) : ((ctx.refRule?.__$title.value) + (form.labelSuffix || form['label-suffix'] || ''))];
+        const children = [titleSlot ? titleSlot({title: ctx.refRule?.__$title?.value, rule: ctx.rule, options: this.options}) : ((ctx.refRule?.__$title?.value) + (form.labelSuffix || form['label-suffix'] || ''))];
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
@@ -163,7 +163,7 @@ export default {
 
             const field = 'content';
             if (infoProp.info && !hasProperty(prop.props, field)) {
-                prop.props[field] = ctx.refRule?.__$info.value;
+                prop.props[field] = ctx.refRule?.__$info?.value;
             }
 
             children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {

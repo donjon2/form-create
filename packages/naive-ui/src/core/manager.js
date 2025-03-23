@@ -135,7 +135,7 @@ export default {
         if (this.options.form.title === false) return false;
         if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
         const titleSlot = this.getSlot('title');
-        const children = [titleSlot ? titleSlot({title: ctx.refRule?.__$title.value, rule: ctx.rule, options: this.options}) : ctx.refRule?.__$title.value];
+        const children = [titleSlot ? titleSlot({title: ctx.refRule?.__$title?.value, rule: ctx.rule, options: this.options}) : ctx.refRule?.__$title?.value];
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
@@ -151,7 +151,7 @@ export default {
             delete prop.props.native;
 
             children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {
-                [infoProp.slot || 'default']: () => ctx.refRule?.__$info.value,
+                [infoProp.slot || 'default']: () => ctx.refRule?.__$info?.value,
                 [titleProp.slot || 'trigger']: () => this.$r({
                     type: 'NIcon',
                     props: {

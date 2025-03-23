@@ -584,7 +584,11 @@ export default function Api(h) {
             }, opt.wait == null ? 1000 : opt.wait);
         },
         getData(id, def) {
-            return h.fc.getLoadData(id, def);
+            if (h.fc.get) {
+                return h.fc.get(id, def);
+            } else {
+                return h.fc.getLoadData(id, def);
+            }
         },
         watchData(fn) {
             return h.fc.watchLoadData((get, change) => {

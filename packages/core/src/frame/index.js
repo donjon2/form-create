@@ -305,6 +305,7 @@ export default function FormCreateFactory(config) {
                 components,
                 directives,
             },
+            get: null,
             drivers,
             renderDriver: null,
             refreshData,
@@ -538,9 +539,15 @@ export default function FormCreateFactory(config) {
             let unwatch = {};
 
             const run = (flag) => {
+                if (!this.get) {
+                    this.get = get;
+                }
                 invoke(() => {
                     fn(get, flag);
                 });
+                if (this.get === get) {
+                    this.get = undefined;
+                }
             };
 
             const get = (id, def) => {

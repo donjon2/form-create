@@ -75,7 +75,7 @@ export default function Api(h) {
         get scope() {
             let parent = h.vm;
             while (parent && parent.setupState.fapi) {
-                if (!parent.setupState.props.subForm) {
+                if (!parent.props.subForm) {
                     return parent.setupState.fapi;
                 } else {
                     parent = parent.setupState.parent;

@@ -206,9 +206,7 @@ export default function $FormCreate(FormCreate, components, directives) {
                 fc.updated();
             });
 
-            watch(subForm, (n) => {
-                n ? addSubForm() : rmSubForm();
-            }, {immediate: true});
+            addSubForm();
 
             watch(() => props.option, () => {
                 fc.initOptions();

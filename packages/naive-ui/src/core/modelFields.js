@@ -4,7 +4,7 @@ export default {
     cascader: 'value',
     dynamicTags: 'value',
     inputNumber: 'value',
-    timePicker: 'formatted-value',
+    timePicker: 'formattedValue',
     rate: 'value',
     slider: 'value',
     treeSelect: 'value',

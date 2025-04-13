@@ -4,7 +4,7 @@ const name = 'datePicker';
 
 export default {
     name,
-    modelField: 'formatted-value',
+    modelField: 'formattedValue',
     maker: (function () {
         return ['year', 'month', 'date', 'datetime', 'datetimeRange', 'quarter', 'dateRange'].reduce((initial, type) => {
             initial[type] = creatorFactory(name, {type: type.toLowerCase()});

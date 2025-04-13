@@ -16,6 +16,7 @@ import {
 import toArray from '@form-create/utils/lib/toarray';
 import debounce from '@form-create/utils/lib/debounce';
 import toLine from '@form-create/utils/lib/toline';
+import {toJson} from '../frame/util';
 
 const getGroupInject = (vm, parent) => {
     if (!vm || vm === parent) {
@@ -225,7 +226,7 @@ export default function $FormCreate(FormCreate, components, directives) {
             });
 
             watch(modelValue, (n) => {
-                if (JSON.stringify(n || {}) === data.updateValue) return;
+                if (toJson(n || {}) === data.updateValue) return;
                 if (fapi.config.forceCoverValue) {
                     fapi.coverValue(n || {});
                 } else {
@@ -258,7 +259,7 @@ export default function $FormCreate(FormCreate, components, directives) {
                 },
                 updateValue(value) {
                     if (data.destroyed) return;
-                    const json = JSON.stringify(value);
+                    const json = toJson(value);
                     if (data.updateValue === json) {
                         return;
                     }

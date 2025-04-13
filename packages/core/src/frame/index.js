@@ -482,7 +482,7 @@ export default function FormCreateFactory(config) {
                         }
                     });
                     this.unwatch.push(unwatch);
-                    return val;
+                    return deepGet(val, split);
                 }
             }
         },

@@ -135,7 +135,7 @@ export default defineComponent({
         formData(key, formData) {
             const cacheRule = this.cacheRule;
             const keys = this.sort;
-            if (keys.filter(k => cacheRule[k].$f).length !== keys.length) {
+            if (keys.filter(k => cacheRule[k] && cacheRule[k].$f).length !== keys.length) {
                 return;
             }
             const value = keys.map(k => {
@@ -170,6 +170,7 @@ export default defineComponent({
             }
             this.parse && this.parse({rule, options, index: this.sort.length});
             this.cacheRule[++this.len] = {rule, options};
+            this.sort = Object.keys(this.cacheRule);
             if (emit) {
                 nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
             }
@@ -184,6 +185,7 @@ export default defineComponent({
             const index = Object.keys(this.cacheRule).indexOf(key);
             delete this.cacheRule[key];
             delete this.cacheValue[key];
+            this.sort = Object.keys(this.cacheRule);
             if (emit) {
                 nextTick(() => this.$emit('remove', index));
             }
@@ -265,9 +267,6 @@ export default defineComponent({
         }
     },
     created() {
-        watch(() => ({...this.cacheRule}), (n) => {
-            this.sort = Object.keys(n);
-        }, {immediate: true})
         const d = (this.expand || 0) - this.modelValue.length;
         for (let i = 0; i < this.modelValue.length; i++) {
             this.addRule(i);

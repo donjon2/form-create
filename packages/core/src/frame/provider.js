@@ -256,7 +256,7 @@ const fetch = function (fc) {
                     return;
                 }
                 invoke(() => fc.create.fetch(config, {inject, rule, api}));
-            });
+            }).catch(e => {});
         }, option.wait || 600));
     }
 

@@ -82,6 +82,21 @@ export default {
     getDefaultOptions() {
         return getConfig();
     },
+    adapterValidate(validate, validator) {
+        validate.validator = (rule, value) => {
+            return new Promise((resolve, reject) => {
+                const callback = (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                }
+                return validator(value, callback);
+            })
+        }
+        return validate;
+    },
     update() {
         const form = this.options.form;
         this.rule = {

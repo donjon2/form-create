@@ -215,13 +215,12 @@ export default function useContext(Handler) {
                     computedRule = {value: computedRule}
                 }
                 Object.keys(computedRule).forEach(k => {
-                    let oldValue = undefined;
                     const computedValue = computed(() => {
                         const item = computedRule[k];
                         if (!item) return undefined;
                         const value = this.compute(ctx, item);
                         if (item.linkage && value === oldValueTag) {
-                            return oldValue;
+                            return oldValueTag;
                         }
                         return value;
                     });
@@ -238,11 +237,13 @@ export default function useContext(Handler) {
                         callback(computedValue.value);
                     }
                     ctx.watch.push(watch(computedValue, (n) => {
-                        oldValue = n;
+                        if(n === oldValueTag) {
+                            return ;
+                        }
                         setTimeout(() => {
                             callback(n);
                         });
-                    }));
+                    }, {deep: true}));
                 });
 
             });
@@ -259,7 +260,7 @@ export default function useContext(Handler) {
                 if (before === false) {
                     callback();
                 } else {
-                    const key = this.validator(value, validate);
+                    const key = this.validator(ctx, value, validate);
                     if (!key) {
                         if (validate.validator) {
                             const res = validate.validator && invoke(() => validate.validator(value, callback));
@@ -297,7 +298,7 @@ export default function useContext(Handler) {
                 title: ctx.refRule?.__$title?.value
             });
         },
-        validator(value, validate) {
+        validator(ctx, value, validate) {
             const isEmpty = is.empty(value);
             if (isEmpty) {
                 if (validate.required) {
@@ -411,6 +412,11 @@ export default function useContext(Handler) {
                 case 'phone':
                     const regexPhone = /^(?:(?:\+|00)86)?1[3-9]\d{9}$/;
                     if (!regexPhone.test('' + value)) {
+                        return key;
+                    }
+                    break;
+                case 'computed':
+                    if (!this.compute(ctx, rule)) {
                         return key;
                     }
                     break;

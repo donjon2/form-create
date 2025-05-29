@@ -139,7 +139,7 @@ export function toProps(rule) {
     const prop = {...(rule.props || {})};
 
     Object.keys(rule.on || {}).forEach(k => {
-        if(k.indexOf('-') > 0) {
+        if (k.indexOf('-') > 0) {
             k = toCase(k);
         }
         const name = `on${upper(k)}`;
@@ -260,4 +260,53 @@ export function convertFieldToConditions(field) {
     });
 
     return conditions.join(' && ');
+}
+
+export function parseTemplateToTree(template) {
+    const tokens = [];
+    let current = '';
+    let depth = 0;
+
+    for (let i = 0; i < template.length; i++) {
+        const char = template[i];
+
+        if (char === '[') {
+            if (depth === 0 && current) {
+                tokens.push({type: 'key', value: current});
+                current = '';
+            }
+            depth++;
+            current += char;
+        } else if (char === ']') {
+            depth--;
+            current += char;
+
+            if (depth === 0) {
+                tokens.push({
+                    type: 'bracket',
+                    value: parseTemplateToTree(current.slice(1, -1))
+                });
+                current = '';
+            }
+        } else if (char === '.' && depth === 0) {
+            if (current) {
+                tokens.push({type: 'key', value: current});
+                current = '';
+            }
+        } else {
+            current += char;
+        }
+    }
+
+    if (current) {
+        tokens.push({type: 'key', value: current});
+    }
+
+    return tokens.map(token => {
+        if (token.type === 'key') {
+            return {key: token.value};
+        } else {
+            return {children: token.value};
+        }
+    });
 }

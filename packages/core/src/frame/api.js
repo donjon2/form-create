@@ -532,8 +532,7 @@ export default function Api(h) {
                 let config = api.options.globalData[name];
                 if (!config) {
                     resolve(h.fc.loadData[name]);
-                }
-                if (config.type === 'fetch') {
+                } else if (config.type === 'fetch') {
                     api.fetch(config).then(res => {
                         resolve(res);
                     }).catch(inject);

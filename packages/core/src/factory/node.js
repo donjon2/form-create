@@ -2,7 +2,7 @@ import toLine from '@form-create/utils/lib/toline';
 import toString from '@form-create/utils/lib/tostring';
 import extend from '@form-create/utils/lib/extend';
 import {toProps} from '../frame/util';
-import {createVNode, getCurrentInstance, resolveComponent, resolveDirective, withDirectives} from 'vue';
+import {createVNode, resolveComponent, resolveDirective, withDirectives} from 'vue';
 
 
 function tidyDirectives(directives) {
@@ -31,7 +31,8 @@ export function CreateNodeFactory() {
 
     const aliasMap = {};
 
-    function CreateNode() {
+    function CreateNode(vm) {
+        this.vm = vm;
     }
 
     extend(CreateNode.prototype, {
@@ -47,7 +48,7 @@ export function CreateNodeFactory() {
             }
         },
         h(tag, data, children) {
-            const isNativeTag = getCurrentInstance().appContext.config.isNativeTag(tag);
+            const isNativeTag = this.vm.appContext.config.isNativeTag(tag);
             if (isNativeTag) {
                 delete data.formCreateInject;
             }

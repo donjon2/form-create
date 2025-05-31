@@ -26,7 +26,31 @@ export function toJson(obj, space) {
 }
 
 function makeFn(fn) {
-    return (new Function('return ' + fn))();
+    // 处理所有控制字符和特殊字符
+    fn = fn.replace(/[\n\r\t\b\f\v\0\u2028\u2029]/g, function(match) {
+        return {
+            '\n': '\\n',    // 换行符
+            '\r': '\\r',    // 回车符
+            '\t': '\\t',    // 制表符
+            '\b': '\\b',    // 退格符
+            '\f': '\\f',    // 换页符
+            '\v': '\\v',    // 垂直制表符
+            '\0': '\\0',    // 空字符
+            '\u2028': '\\u2028',  // 行分隔符
+            '\u2029': '\\u2029'   // 段落分隔符
+        }[match];
+    });
+    
+    // 处理双引号
+    fn = fn.replace(/"/g, '\\"');
+    
+    try {
+        fn = JSON.parse(`"${fn}"`);
+        return (new Function('return ' + fn))();
+    } catch (e) {
+        console.warn('Parse function error:', e);
+        return fn;
+    }
 }
 
 export function parseFn(fn, mode) {

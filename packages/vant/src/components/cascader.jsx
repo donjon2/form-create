@@ -89,7 +89,7 @@ export default defineComponent({
                     onClick={this.clear}></i> : undefined;
         }
 
-        return <>
+        return <div class="_fc-cascader">
             <van-field ref="el" placeholder={this.placeholder} readonly disabled={this.$props.disabled}
                 onClick={this.open}
                 model-value={this.inputValue} border={false} isLink v-slots={{
@@ -105,7 +105,7 @@ export default defineComponent({
                     onFinish={this.confirm}
                 />
             </van-popup>
-        </>
+        </div>
     },
     mounted() {
         this.$emit('fc.el', this.$refs.el);

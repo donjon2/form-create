@@ -140,8 +140,7 @@ const componentValidate = {
                 options = {method: options};
             }
             const method = options.method;
-            delete options.method;
-            attr.getProp().validate = [{
+            const validate = {
                 ...options,
                 validator(...args) {
                     const ctx = byCtx(rule);
@@ -153,7 +152,9 @@ const componentValidate = {
                         });
                     }
                 }
-            }];
+            };
+            delete validate.method;
+            attr.getProp().validate = [validate];
         }
     },
     watch(...args) {

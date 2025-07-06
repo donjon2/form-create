@@ -49,7 +49,7 @@ extend(Manager.prototype, {
         }
         return validate;
     },
-    getSlot(name){
+    getSlot(name) {
         const _fn = (vm) => {
             if (vm) {
                 let slot = vm.slots[name];
@@ -79,6 +79,8 @@ extend(Manager.prototype, {
     },
     getDefaultOptions() {
         return {};
+    },
+    fieldChange(ctx, value, formValue, setFlag) {
     },
     render(children) {
     }

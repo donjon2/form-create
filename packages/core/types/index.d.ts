@@ -529,6 +529,7 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     forceCoverValue?: boolean;
     formData?: FormData;
     el?: Element | string;
+    onValidateFail?: (e: Object, form: {api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>}) => void;
     onSubmit?: (formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     onReset?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     beforeFetch?: (config: FetchEffectOption, form: {

@@ -22,6 +22,6 @@ export default {
     render(children, ctx) {
         let type = ctx.prop.props.type;
         if (['textarea', 'search', 'password'].indexOf(type) === -1) type = 'input';
-        return ctx.$render.vNode.make('A' + alias[type], ctx.prop, children);
+        return ctx.$render.vNode.make('a' + alias[type], ctx.prop, children);
     }
 }

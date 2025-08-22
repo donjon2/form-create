@@ -16,7 +16,7 @@ export default {
         let type = ctx.prop.props.type;
         if (['textarea', 'search', 'password'].indexOf(type) === -1) type = 'input';
 
-        type = {textarea: 'ATextarea', search: 'AInputSearch', password: 'AInputPassword'}[type] || 'AInput'
+        type = {textarea: 'aTextarea', search: 'aInputSearch', password: 'aInputPassword'}[type] || 'aInput'
         return ctx.$render.vNode.make(type, ctx.prop, children);
     }
 }

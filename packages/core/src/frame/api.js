@@ -592,6 +592,9 @@ export default function Api(h) {
             h.vm.emit(name, ...args);
         },
         bus: h.bus,
+        getCurrentFormRule() {
+            return h.vm.setupState.getGroupInject()?.rule;
+        },
         fetch(opt) {
             return new Promise((resolve, reject) => {
                 opt = deepCopy(opt);

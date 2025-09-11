@@ -19,6 +19,7 @@ export default {
     inputNumber: PRE + '-input-number',
     number: PRE + '-input-number',
     input: PRE + '-input',
+    textarea: PRE + '-input',
     formItem: PRE + '-form-item',
     form: PRE + '-form',
     frame: 'fc-frame',

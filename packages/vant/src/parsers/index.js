@@ -39,6 +39,14 @@ const cascader = {
     }
 }
 
+const textarea =  {
+    name: 'textarea',
+    mergeProp(ctx) {
+        let {props} = ctx.prop;
+        props.type = 'textarea';
+    }
+}
+
 
 export default [
     hidden,
@@ -47,4 +55,5 @@ export default [
     checkbox,
     radio,
     select,
+    textarea,
 ]

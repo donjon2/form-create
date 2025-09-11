@@ -18,6 +18,7 @@ export default {
     checkbox: 'fc-checkbox',
     radio: 'fc-radio',
     input: PRE + '-field',
+    textarea: PRE + '-field',
     field: PRE + '-field',
     formItem: PRE + '-field',
     form: PRE + '-form',

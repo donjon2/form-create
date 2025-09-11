@@ -19,7 +19,7 @@ export default {
     colorPicker: PRE + 'ColorPicker',
     search: PRE + 'InputSearch',
     input: PRE + 'Input',
-    textarea: PRE + 'Textarea',
+    textarea: PRE + 'Input',
     password: PRE + 'InputPassword',
     formItem: PRE + 'FormItem',
     form: PRE + 'Form',

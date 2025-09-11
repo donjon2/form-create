@@ -185,7 +185,11 @@ extend(RuleContext.prototype, {
     unwatch() {
         this.watch.forEach(un => un());
         this.watch = [];
-        this.refRule = {};
+        Object.keys(this.refRule).forEach(key => {
+            if (key.indexOf('__$') !== 0) {
+                delete this.refRule[key];
+            }
+        })
     },
     unlink() {
         this.linkOn.forEach(un => un());

@@ -2,6 +2,7 @@ import {hasProperty} from '@form-create/utils/lib/type';
 import {defineComponent, markRaw, nextTick, watch} from 'vue';
 import deepExtend, {deepCopy} from '@form-create/utils/lib/deepextend';
 import extend from '@form-create/utils/lib/extend';
+import {toPromise} from '@form-create/utils';
 
 const NAME = 'fcGroup';
 
@@ -37,6 +38,14 @@ export default defineComponent({
         disabled: {
             type: Boolean,
             default: undefined
+        },
+        title: {
+            type: [String, Function],
+            default: null
+        },
+        type: {
+            type: String,
+            default: 'default'
         },
         onBeforeRemove: {
             type: Function,
@@ -194,13 +203,20 @@ export default defineComponent({
             this.input(value);
         },
         del(index, key) {
-            if (this.disabled || false === this.onBeforeRemove(this.modelValue, index)) {
+            if (this.disabled) {
                 return;
             }
-            this.removeRule(key, true);
-            const value = [...this.modelValue];
-            value.splice(index, 1);
-            this.input(value);
+            const del = () => {
+                this.removeRule(key, true);
+                const value = [...this.modelValue];
+                value.splice(index, 1);
+                this.input(value);
+            }
+            toPromise(this.onBeforeRemove(this.modelValue, index)).then(res => {
+                if (false !== res) {
+                    del();
+                }
+            })
         },
         addIcon(key) {
             return <div class="_fc-m-group-btn _fc-m-group-plus-minus" onClick={this.add}></div>;
@@ -226,6 +242,30 @@ export default defineComponent({
             }));
             this.formData(0);
         },
+        sortIcon(index, total) {
+            const canMoveUp = index > 0;
+            const canMoveDown = index < total - 1;
+
+            if (!canMoveUp && !canMoveDown) {
+                return null;
+            }
+
+            if (canMoveUp && canMoveDown) {
+                // 显示合并的上下箭头按钮
+                return <div class="_fc-m-group-btn _fc-m-group-sort">
+                    <div class="_fc-m-group-sort-up" onClick={() => this.changeSort(index, -1)}></div>
+                    <div class="_fc-m-group-sort-down" onClick={() => this.changeSort(index, 1)}></div>
+                </div>;
+            }
+
+            if (canMoveUp) {
+                return this.sortUpIcon(index);
+            }
+
+            if (canMoveDown) {
+                return this.sortDownIcon(index);
+            }
+        },
         makeIcon(total, index, key) {
             if (this.$slots.button) {
                 return this.$slots.button({
@@ -244,11 +284,11 @@ export default defineComponent({
             if (total > this.min) {
                 btn.push(this.delIcon(index, key));
             }
-            if (this.sortBtn && index) {
-                btn.push(this.sortUpIcon(index));
-            }
-            if (this.sortBtn && index !== total - 1) {
-                btn.push(this.sortDownIcon(index));
+            if (this.sortBtn) {
+                const sortBtn = this.sortIcon(index, total);
+                if (sortBtn) {
+                    btn.push(sortBtn);
+                }
             }
             return btn;
         },
@@ -257,8 +297,18 @@ export default defineComponent({
         },
         expandRule(n) {
             for (let i = 0; i < n; i++) {
-                this.addRule(i);
+                this.modelValue.push(this.field ? null : {});
             }
+            this.input([...this.modelValue]);
+        },
+        getTitle(index, key) {
+            if (typeof this.title === 'function') {
+                return this.title(index, this.modelValue[index], key);
+            }
+            if (typeof this.title === 'string') {
+                return this.title.replace('{index}', index + 1);
+            }
+            return false;
         }
     },
     created() {
@@ -275,6 +325,7 @@ export default defineComponent({
         const button = this.button;
         const Type = this.form;
         const disabled = this.disabled;
+        const isCardType = this.type === 'card';
 
         const children = keys.length === 0 ?
             (this.$slots.default ? (this.$slots.default({
@@ -284,25 +335,55 @@ export default defineComponent({
                 onClick={this.add}/>) : keys.map((key, index) => {
                 const {rule, options} = this.cacheRule[key];
                 const btn = button && !disabled ? this.makeIcon(keys.length, index, key) : [];
-                return <div class="_fc-m-group-container" key={key}>
-                    <Type
-                        key={key}
-                        {...{
-                            disabled,
-                            'onUpdate:modelValue': (formData) => this.formData(key, formData),
-                            'onEmit-event': (name, ...args) => this.emitEvent(name, args, index, key),
-                            'onUpdate:api': ($f) => this.add$f(index, key, $f),
-                            inFor: true,
-                            modelValue: this.field ? {[this.field]: this._value(this.modelValue[index])} : this.modelValue[index],
-                            rule,
-                            option: options,
-                            extendOption: true
-                        }}
-                    />
-                    <div class="_fc-m-group-idx">{index + 1}</div>
-                    {(btn.length) ? <div class="_fc-m-group-handle fc-clock">{btn}</div> : null}
-                </div>
+                const title = this.getTitle(index, key);
+
+                if (isCardType) {
+                    return <div class="_fc-m-group-container" key={key}>
+                        <div class="_fc-m-group-header">
+                            {title === false ? <div class="_fc-m-group-idx">{index + 1}</div> : null}
+                            {title !== false ? <div class="_fc-m-group-title">{title}</div> : null}
+                            <div class="_fc-m-group-handle fc-clock">
+                                {(btn.length) ? btn : null}
+                            </div>
+                        </div>
+                        <div class="_fc-m-group-content">
+                            <Type
+                                key={key}
+                                {...{
+                                    disabled,
+                                    'onUpdate:modelValue': (formData) => this.formData(key, formData),
+                                    'onEmit-event': (name, ...args) => this.emitEvent(name, args, index, key),
+                                    'onUpdate:api': ($f) => this.add$f(index, key, $f),
+                                    inFor: true,
+                                    modelValue: this.field ? {[this.field]: this._value(this.modelValue[index])} : this.modelValue[index],
+                                    rule,
+                                    option: options,
+                                    extendOption: true
+                                }}
+                            />
+                        </div>
+                    </div>
+                } else {
+                    return <div class="_fc-m-group-container" key={key}>
+                        <Type
+                            key={key}
+                            {...{
+                                disabled,
+                                'onUpdate:modelValue': (formData) => this.formData(key, formData),
+                                'onEmit-event': (name, ...args) => this.emitEvent(name, args, index, key),
+                                'onUpdate:api': ($f) => this.add$f(index, key, $f),
+                                inFor: true,
+                                modelValue: this.field ? {[this.field]: this._value(this.modelValue[index])} : this.modelValue[index],
+                                rule,
+                                option: options,
+                                extendOption: true
+                            }}
+                        />
+                        <div class="_fc-m-group-idx">{index + 1}</div>
+                        {(btn.length) ? <div class="_fc-m-group-handle fc-clock">{btn}</div> : null}
+                    </div>
+                }
             });
-        return <div key={'con'} class={'_fc-m-group ' + (disabled ? '_fc-m-group-disabled' : '')}>{children}</div>
+        return <div key={'con'} class={'_fc-m-group ' + (disabled ? '_fc-m-group-disabled' : '') + (isCardType ? ' _fc-m-group-card' : '')}>{children}</div>
     }
 });

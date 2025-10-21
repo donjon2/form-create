@@ -219,7 +219,7 @@ export default function useContext(Handler) {
                         const item = computedRule[k];
                         if (!item) return undefined;
                         const value = this.compute(ctx, item);
-                        if (item.linkage && value === oldValueTag) {
+                        if ((item.linkage || item.linkageVariable) && value === oldValueTag) {
                             return oldValueTag;
                         }
                         return value;
@@ -441,7 +441,7 @@ export default function useContext(Handler) {
                         let flag;
                         let field = null;
                         if (one.variable) {
-                            field = JSON.stringify(this.fc.getLoadData(one.variable) || '');
+                            field = JSON.stringify(this.fc.getLoadData(one.variable)) || '';
                         } else if (one.field) {
                             field = convertFieldToConditions(one.field || '');
                         } else if (!one.mode) {
@@ -473,10 +473,12 @@ export default function useContext(Handler) {
                 val = item.invert === true ? !val : val;
                 if (item.linkage) {
                     return val ? invoke(() => this.computeValue(item.linkage, ctx, group), undefined) : oldValueTag;
+                } else if(item.linkageVariable) {
+                    return val ? invoke(() => this.fc.getLoadData(item.linkageVariable), undefined) : oldValueTag;
                 }
                 return val;
             } else if (is.Function(item)) {
-                fn = () => item(this.api.form, this.api);
+                fn = () => item(this.api.form, this.api, ctx.rule);
             } else {
                 const group = ctx.getParentGroup();
                 fn = () => this.computeValue(item, ctx, group);

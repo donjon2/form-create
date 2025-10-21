@@ -106,6 +106,7 @@ export interface Driver {
     parsers: {
         [id: string]: Parser;
     };
+    initOptions: (options: Object) => void;
     updateOptions: (options: Object) => void;
     updateWrap: (ctx: Object) => void;
     defaultRender: (children: Slots, ctx: Object) => VNodeChild | VNodeChild[];
@@ -371,6 +372,41 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
             rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
             api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
         }) => void;
+        deepLoad?: (evt: {
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            parent: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        deepMounted?: (evt: {
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            parent: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        deepDeleted?: (evt: {
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            parent: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        deepValue?: (evt: {
+            value: any,
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            parent: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        deepHidden?: (evt: {
+            value: boolean,
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            parent: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        deepWatch?: (evt: {
+            key: string,
+            oldValue: any,
+            newValue: any,
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            parent: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
     }
 
     [key: string]: any;
@@ -494,6 +530,7 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     forceCoverValue?: boolean;
     formData?: FormData;
     el?: Element | string;
+    onValidateFail?: (e: Object, form: {api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>}) => void;
     onSubmit?: (formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     onReset?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     beforeFetch?: (config: FetchEffectOption, form: {
@@ -634,6 +671,16 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     getRule(id: string, origin: true): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     getRule(id: string, origin: false): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+
+    getCurrentFormRule(): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+
+    findType(type: string, origin: true): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+
+    findType(type: string, origin: false): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+
+    findTypes(type: string, origin: true): Array<FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>>;
+
+    findTypes(type: string, origin: false): Array<Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>>;
 
     getParentRule(id: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): undefined | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 

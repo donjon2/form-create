@@ -349,7 +349,7 @@ export default function FormCreateFactory(config) {
                 this.unwatch.push(watch(() => this.vm.setupState.parent.setupState.fc.options.value, () => {
                     this.initOptions();
                     this.$handle.api.refresh();
-                }, {deep: true}));
+                }, {deep: true, flush: 'sync'}));
             }
             if (this.vm.props.driver) {
                 this.renderDriver = typeof this.vm.props.driver === 'object' ? this.vm.props.driver : this.drivers[this.vm.props.driver];
@@ -364,6 +364,7 @@ export default function FormCreateFactory(config) {
             this.$handle.init();
         },
         targetFormDriver(method, ...args) {
+            this.bus.$emit(method, ...args);
             if (this.renderDriver && this.renderDriver[method]) {
                 return invoke(() => this.renderDriver[method](...args));
             }
@@ -431,6 +432,7 @@ export default function FormCreateFactory(config) {
                             return;
                         }
                         const options = this.$handle.loadFetchVar(copy(option), get);
+                        options.targetRule = this.targetRule;
                         this.$handle.api.fetch(options).then(res => {
                             _emit(res);
                         }).catch(e => {
@@ -438,6 +440,9 @@ export default function FormCreateFactory(config) {
                         });
                     };
                     const unwatch = this.watchLoadData(callback);
+                    if(option.watch === false) {
+                        unwatch();
+                    }
                     this.unwatch.push(unwatch);
                     return val;
                 }
@@ -454,9 +459,13 @@ export default function FormCreateFactory(config) {
             return 'zh-cn';
         },
         globalLanguageDriver(id) {
+            let t = this.vm.setupState.top.props.t;
             let locale = this.vm.setupState.top.props.locale;
             let value = undefined;
-            if (locale && typeof locale === 'object') {
+            if (t) {
+                value = invoke(() => t(id));
+            }
+            if (value == null && locale && typeof locale === 'object') {
                 value = deepGet(locale, id);
             }
             if (value == null) {
@@ -476,16 +485,7 @@ export default function FormCreateFactory(config) {
             if (option) {
                 const handle = is.Function(option) ? option : parseFn(option.handle);
                 if (handle) {
-                    let val;
-                    const unwatch = this.watchLoadData((get, flag) => {
-                        if (flag) {
-                            this.bus.$emit('$loadData.$var.' + key);
-                            unwatch();
-                        } else {
-                            val = handle(get, this.$handle.api);
-                        }
-                    });
-                    this.unwatch.push(unwatch);
+                    let val = handle((...args) => this.$handle.api.getData(...args), this.$handle.api);
                     return deepGet(val, split);
                 }
             }
@@ -503,7 +503,10 @@ export default function FormCreateFactory(config) {
             if (id != null) {
                 let split = id.split('.');
                 const key = split.shift();
-                if (key === '$topForm') {
+                val = deepGet(this.vm.setupState.top.setupState.fc.tmpData, id);
+                if (val != null) {
+                    return val;
+                } else if (key === '$topForm') {
                     val = this.$handle.api.top.formData(true);
                 } else if (key === '$scopeForm') {
                     val = this.$handle.api.scope.formData(true);
@@ -526,11 +529,7 @@ export default function FormCreateFactory(config) {
                 } else if (key === '$preview') {
                     return this.$handle.preview;
                 } else {
-                    const tmpData = this.vm.setupState.top.setupState.fc.tmpData;
-                    if (!hasProperty(tmpData, key)) {
-                        tmpData[key] = defValueTag;
-                    }
-                    val = tmpData[key] !== defValueTag ? deepGet(tmpData, id) : getData(id);
+                    val = getData(id);
                     split = [];
                 }
                 if (val && split.length) {
@@ -617,10 +616,13 @@ export default function FormCreateFactory(config) {
                 globalEvent: {},
                 globalData: {}, ...deepCopy(globalConfig)
             };
-            if (this.isSub()) {
+            const isSubForm = this.isSub();
+            if (isSubForm) {
                 options = this.mergeOptions(options, this.vm.setupState.parent.setupState.fc.options.value || {}, true);
             }
             options = this.mergeOptions(options, this.vm.props.option);
+            const api = this.api();
+            this.targetFormDriver('initOptions', options, {api, isSubForm});
             this.updateOptions(options);
         },
         mergeOptions(target, opt, parent) {

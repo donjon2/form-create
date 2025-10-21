@@ -49,6 +49,7 @@ export default defineComponent({
         },
         onPreview: Function,
         listType: String,
+        uploadText: String,
         modalTitle: String,
         customRequest: Function,
         formCreateInject: Object,
@@ -114,7 +115,7 @@ export default defineComponent({
                 ref="upload" v-slots={getSlot(this.$slots, ['default'])}>
                 {isShow ? (this.$slots.default?.() || ['text', 'picture'].indexOf(this.listType) === -1
                     ? <PlusOutlined style="font-size: 16px; width: 16px;"/>
-                    : <AButton><UploadOutlined/>{this.formCreateInject.t('clickToUpload') || '点击上传'}</AButton>) : null}
+                    : <AButton><UploadOutlined/>{this.formCreateInject.t('clickToUpload') || this.uploadText || '点击上传'}</AButton>) : null}
             </AUpload>
             <aModal mask={this.previewMask} title={this.modalTitle} {...props}
                 onCancel={() => this.previewVisible = false} footer={null}>

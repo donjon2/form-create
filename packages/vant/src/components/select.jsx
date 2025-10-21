@@ -53,7 +53,7 @@ export default defineComponent({
         }
     },
     render() {
-        return <>
+        return <div class="_fc-select">
             <van-field ref="el" placeholder={this.placeholder} readonly disabled={this.$props.disabled} onClick={this.open}
                 model-value={this.inputValue} isLink/>
             <van-popup show={this.show} onUpdate:show={(v) => this.show = v} round position="bottom">
@@ -66,7 +66,7 @@ export default defineComponent({
                     onConfirm={this.confirm}
                 />
             </van-popup>
-        </>
+        </div>
     },
     mounted() {
         this.$emit('fc.el', this.$refs.el);

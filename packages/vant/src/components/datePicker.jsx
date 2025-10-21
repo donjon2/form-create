@@ -64,7 +64,7 @@ export default defineComponent({
                 <i class="van-badge__wrapper van-icon van-icon-clear van-field__clear"
                     onClick={this.clear}></i> : undefined;
         }
-        return <>
+        return <div class="_fc-date-picker">
             <van-field ref="el" placeholder={this.placeholder} readonly disabled={this.$props.disabled}
                 onClick={this.open}
                 model-value={this.modelValue} border={false} isLink v-slots={{
@@ -79,7 +79,7 @@ export default defineComponent({
                     onCancel={() => this.show = false}
                 />
             </van-popup>
-        </>
+        </div>
     },
     mounted() {
         this.$emit('fc.el', this.$refs.el);

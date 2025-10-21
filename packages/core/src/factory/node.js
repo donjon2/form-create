@@ -2,7 +2,7 @@ import toLine from '@form-create/utils/lib/toline';
 import toString from '@form-create/utils/lib/tostring';
 import extend from '@form-create/utils/lib/extend';
 import {toProps} from '../frame/util';
-import {createVNode, resolveComponent, resolveDirective, withDirectives} from 'vue';
+import {createVNode, getCurrentInstance, resolveComponent, resolveDirective, withDirectives} from 'vue';
 
 
 function tidyDirectives(directives) {
@@ -31,8 +31,9 @@ export function CreateNodeFactory() {
 
     const aliasMap = {};
 
-    function CreateNode(vm) {
-        this.vm = vm;
+    function CreateNode(handle) {
+        this.vm = handle.vm;
+        this.handle = handle;
     }
 
     extend(CreateNode.prototype, {
@@ -48,12 +49,14 @@ export function CreateNodeFactory() {
             }
         },
         h(tag, data, children) {
-            const isNativeTag = this.vm.appContext.config.isNativeTag(tag);
-            if (isNativeTag) {
+            const vm = this.vm || getCurrentInstance();
+            const isNativeTag = vm.appContext.config.isNativeTag(tag);
+            const component = this.handle.fc.prop.components[tag];
+            if (!component && isNativeTag) {
                 delete data.formCreateInject;
             }
             try{
-                return createVNode(isNativeTag ? tag : resolveComponent(tag), data, children);
+                return createVNode(component || (isNativeTag ? tag : resolveComponent(tag)), data, children);
             }catch (e){
                 console.error(e);
                 return createVNode('');
@@ -72,10 +75,10 @@ export function CreateNodeFactory() {
                 const line = toLine(k);
                 const lower = toString(k).toLocaleLowerCase();
                 const v = nodes[k];
+                CreateNode.alias(k, v);
                 [k, line, lower].forEach(n => {
-                    CreateNode.alias(k, v);
                     CreateNode.prototype[n] = function (data, children) {
-                        return this.make(v, data, children);
+                        return this.make(aliasMap[k] || n, data, children);
                     };
                 });
             });

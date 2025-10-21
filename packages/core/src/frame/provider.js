@@ -6,6 +6,7 @@ import {deepCopy} from '@form-create/utils/lib/deepextend';
 import toArray from '@form-create/utils/lib/toarray';
 import debounce from '@form-create/utils/lib/debounce';
 import {nextTick} from 'vue';
+import {toPromise} from '@form-create/utils';
 
 const loadData = function (fc) {
     const loadData = {
@@ -140,8 +141,7 @@ const componentValidate = {
                 options = {method: options};
             }
             const method = options.method;
-            delete options.method;
-            attr.getProp().validate = [{
+            const validate = {
                 ...options,
                 validator(...args) {
                     const ctx = byCtx(rule);
@@ -153,7 +153,9 @@ const componentValidate = {
                         });
                     }
                 }
-            }];
+            };
+            delete validate.method;
+            attr.getProp().validate = [validate];
         }
     },
     watch(...args) {
@@ -203,20 +205,6 @@ const fetch = function (fc) {
             option.to = 'options';
         }
 
-        if (option.key) {
-            const item = fc.$handle.options.globalData[option.key];
-            if (!item) {
-                set(undefined);
-                return;
-            }
-            if (item.type === 'static') {
-                set(item.data);
-                return;
-            } else {
-                option = {...option, ...item}
-            }
-        }
-
         const onError = option.onError;
 
         const check = () => {
@@ -229,6 +217,16 @@ const fetch = function (fc) {
         fetchAttr._fn[inject.id] = fc.watchLoadData(debounce((get, change) => {
             if (change && option.watch === false) {
                 return fetchAttr._fn[inject.id]();
+            }
+            if(option.key) {
+                fc.targetRule = rule;
+                const res = get('$globalData.' + option.key);
+                delete fc.targetRule;
+                if (res) {
+                    if (check()) return;
+                    set(res);
+                }
+                return ;
             }
             const _option = fc.$handle.loadFetchVar(deepCopy(option), get, rule);
             const config = {
@@ -245,7 +243,9 @@ const fetch = function (fc) {
                             return deepGet(v, parse);
                         }
                     }
-                    set(fn(body, rule, api));
+                    toPromise(fn(body, rule, api)).then(res => {
+                        set(res);
+                    })
                 },
                 onError(e) {
                     set(undefined);
@@ -255,7 +255,7 @@ const fetch = function (fc) {
             };
             fc.$handle.beforeFetch(config, {rule, api}).then(() => {
                 if (is.Function(_option.action)) {
-                    _option.action(rule, api).then((val) => {
+                    toPromise(_option.action(rule, api)).then((val) => {
                         config.onSuccess(val, true);
                     }).catch((e) => {
                         config.onError(e);

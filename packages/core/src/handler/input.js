@@ -32,6 +32,7 @@ export default function useInput(Handler) {
                     });
                 });
             }
+            this.$manager.fieldChange(ctx, value, formValue, setFlag);
         },
         onInput(ctx, value) {
             let val;
@@ -113,7 +114,7 @@ export default function useInput(Handler) {
             return ctx.rule.ignore === true || ((ctx.rule.ignore === 'hidden' || this.options.ignoreHiddenFields) && ctx.hasHidden());
         },
         appendValue(rule) {
-            if ((!rule.field || !hasProperty(this.appendData, rule.field)) && !this.options.forceCoverValue) {
+            if ((!rule.field || !hasProperty(this.appendData, rule.field)) && (!is.Undef(rule.value) || !this.options.forceCoverValue)) {
                 return;
             }
             rule.value = this.appendData[rule.field];

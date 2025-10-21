@@ -356,6 +356,26 @@ export default function Api(h) {
                 return origin ? ctx.origin : ctx.rule;
             }
         },
+        findType(type, origin) {
+            let rule = undefined;
+            Object.keys(h.ctxs).forEach(k => {
+                const ctx = h.ctxs[k];
+                if (ctx.rule.type === type) {
+                    rule = origin ? ctx.origin : ctx.rule;
+                }
+            });
+            return rule;
+        },
+        findTypes(type, origin) {
+            let rules = [];
+            Object.keys(h.ctxs).forEach(k => {
+                const ctx = h.ctxs[k];
+                if (ctx.rule.type === type) {
+                    rules.push(origin ? ctx.origin : ctx.rule);
+                }
+            });
+            return rules;
+        },
         getRenderRule: (id) => {
             const ctx = h.getCtx(id);
             if (ctx) {
@@ -541,6 +561,12 @@ export default function Api(h) {
                 }
             });
         },
+        setGlobalData(name, value) {
+            api.setData('$globalData.' + name, value);
+        },
+        setGlobalVar(name, value) {
+            api.setData('$var.' + name, value);
+        },
         renderRule(id, onInput, force) {
             const flag = typeof id === 'object';
             const ctx = flag ? byCtx(id) : h.getCtx(id);
@@ -566,6 +592,9 @@ export default function Api(h) {
             h.vm.emit(name, ...args);
         },
         bus: h.bus,
+        getCurrentFormRule() {
+            return h.vm.setupState.getGroupInject()?.rule;
+        },
         fetch(opt) {
             return new Promise((resolve, reject) => {
                 opt = deepCopy(opt);

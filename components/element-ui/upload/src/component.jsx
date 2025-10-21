@@ -43,6 +43,7 @@ export default defineComponent({
         httpRequest: Function,
         modalTitle: String,
         listType: String,
+        uploadText: String,
         formCreateInject: Object,
         modelValue: [Array, String, Object]
     },
@@ -113,7 +114,7 @@ export default defineComponent({
                 {((this.$slots.default?.()) ||
                     (['text', 'picture'].indexOf(this.listType) === -1 ? <ElIcon>
                         <IconUpload/>
-                    </ElIcon> : <ElButton type="primary">{this.formCreateInject.t('clickToUpload') || '点击上传'}</ElButton>)
+                    </ElIcon> : <ElButton type="primary">{this.formCreateInject.t('clickToUpload') || this.uploadText || '点击上传'}</ElButton>)
                 )}
             </ElUpload>
             <ElDialog appendToBody={true} modal={this.previewMask} title={this.modalTitle}

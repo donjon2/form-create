@@ -111,7 +111,7 @@ export default defineComponent({
                 <i class="van-badge__wrapper van-icon van-icon-clear van-field__clear"
                     onClick={this.clear}></i> : undefined;
         }
-        return <>
+        return <div class="_fc-calendar">
             <van-field ref="el" placeholder={this.placeholder} readonly disabled={this.$props.disabled}
                 onClick={this.open}
                 model-value={this.getStrValue()} isLink border={false} v-slots={{
@@ -120,7 +120,7 @@ export default defineComponent({
             <van-calendar {...{...this.$attrs, ...this.dateRange}} show={this.show} onUpdate:show={v => (this.show = v)}
                 type={this.type}
                 onConfirm={this.confirm} defaultDate={this.defaultDate}/>
-        </>
+        </div>
     },
     mounted() {
         this.$emit('fc.el', this.$refs.el);
